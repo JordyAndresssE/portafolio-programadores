@@ -1,28 +1,21 @@
 <div class="home-container">
   <header class="home-header">
-    <div class="logo">Portafolio Devs</div>
-    <nav>
-      <a routerLink="/login" class="nav-link">Iniciar Sesión</a>
-    </nav>
+    <h1>💼 Portafolio Devs</h1>
+    <a routerLink="/login" class="login-link">Iniciar Sesión</a>
   </header>
 
   <section class="hero">
-    <h1>Encuentra al programador ideal para tu proyecto</h1>
-    <div class="search-bar">
-      <input type="text" placeholder="Buscar por nombre, especialidad o tecnología..." [(ngModel)]="terminoBusqueda"
-        (input)="filtrarProgramadores()">
-    </div>
+    <h2>Encuentra al programador ideal para tu proyecto</h2>
+    <input type="text" class="search-input" placeholder="Buscar por nombre, especialidad o tecnología..."
+      [(ngModel)]="terminoBusqueda" (input)="filtrarProgramadores()">
   </section>
 
-  <section class="programmers-list">
+  <section class="programmers-section">
     <div *ngFor="let dev of programadoresFiltrados" class="dev-card">
-      <div class="dev-header">
-        <img [src]="dev.fotoPerfil || 'assets/default-avatar.png'" alt="{{ dev.nombre }}" class="avatar">
-        <div class="dev-info">
-          <h3>{{ dev.nombre }}</h3>
-          <span class="specialty">{{ dev.especialidad || 'Programador' }}</span>
-        </div>
-      </div>
+      <img [src]="dev.fotoPerfil || 'assets/default-avatar.png'" alt="{{ dev.nombre }}" class="dev-avatar">
+
+      <h3>{{ dev.nombre }}</h3>
+      <p class="specialty">{{ dev.especialidad || 'Programador' }}</p>
       <p class="bio">{{ dev.descripcion | slice:0:100 }}{{ dev.descripcion && dev.descripcion.length > 100 ? '...' : ''
         }}</p>
 
@@ -31,11 +24,11 @@
         <span *ngIf="dev.tecnologias.length > 3" class="more-tag">+{{ dev.tecnologias.length - 3 }}</span>
       </div>
 
-      <button [routerLink]="['/perfil', dev.uid]" class="view-profile-btn">Ver Perfil Completo</button>
+      <button [routerLink]="['/perfil', dev.uid]" class="view-btn">Ver Perfil</button>
     </div>
 
     <div *ngIf="programadoresFiltrados.length === 0" class="no-results">
-      <p>No se encontraron programadores que coincidan con tu búsqueda.</p>
+      <p>No se encontraron programadores.</p>
     </div>
   </section>
 </div>
