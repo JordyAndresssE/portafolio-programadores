@@ -1,0 +1,78 @@
+<div class="profile-container" *ngIf="programador">
+    <header class="profile-header">
+        <div class="header-content">
+            <img [src]="programador.fotoPerfil || 'assets/default-avatar.png'" class="avatar-large">
+            <div class="info">
+                <h1>{{ programador.nombre }}</h1>
+                <h2 class="specialty">{{ programador.especialidad }}</h2>
+                <div class="social-links" *ngIf="programador.redesSociales">
+                    <a *ngIf="programador.redesSociales.linkedin" [href]="programador.redesSociales.linkedin"
+                        target="_blank">LinkedIn</a>
+                    <a *ngIf="programador.redesSociales.github" [href]="programador.redesSociales.github"
+                        target="_blank">GitHub</a>
+                    <a *ngIf="programador.redesSociales.sitioWeb" [href]="programador.redesSociales.sitioWeb"
+                        target="_blank">Web</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="profile-content">
+        <section class="about">
+            <h3>Sobre mí</h3>
+            <p>{{ programador.descripcion || 'Sin descripción.' }}</p>
+        </section>
+
+        <section class="projects">
+            <h3>Proyectos Destacados</h3>
+            <div class="projects-grid">
+                <div *ngFor="let proyecto of proyectos" class="project-card">
+                    <h4>{{ proyecto.nombre }}</h4>
+                    <p>{{ proyecto.descripcion }}</p>
+                    <div class="techs">
+                        <span *ngFor="let tech of proyecto.tecnologias" class="tech-badge">{{ tech }}</span>
+                    </div>
+                    <div class="links">
+                        <a *ngIf="proyecto.repoUrl" [href]="proyecto.repoUrl" target="_blank">Código</a>
+                        <a *ngIf="proyecto.demoUrl" [href]="proyecto.demoUrl" target="_blank">Demo</a>
+                    </div>
+                </div>
+                <div *ngIf="proyectos.length === 0">Este programador aún no ha publicado proyectos.</div>
+            </div>
+        </section>
+
+        <section class="advisory-request" *ngIf="usuarioActual && usuarioActual.uid !== programador.uid">
+            <h3>Solicitar Asesoría</h3>
+
+            <div class="availability-info" *ngIf="programador.disponibilidad">
+                <p><strong>Horario de Atención:</strong></p>
+                <p>Días: {{ programador.disponibilidad.dias.join(', ') }}</p>
+                <p>Horas: {{ programador.disponibilidad.horaInicio }} - {{ programador.disponibilidad.horaFin }}</p>
+            </div>
+
+            <div class="request-form">
+                <div class="form-group">
+                    <label>Motivo de la asesoría</label>
+                    <input [(ngModel)]="solicitud.motivo"
+                        placeholder="Ej: Revisión de código, Orientación profesional...">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fecha Propuesta</label>
+                        <input type="date" [(ngModel)]="solicitud.fechaAsesoria">
+                    </div>
+                    <div class="form-group">
+                        <label>Hora Propuesta</label>
+                        <input type="time" [(ngModel)]="solicitud.horaAsesoria">
+                    </div>
+                </div>
+                <button (click)="enviarSolicitud()" class="send-btn">Enviar Solicitud</button>
+            </div>
+        </section>
+
+        <div class="login-prompt" *ngIf="!usuarioActual">
+            <p>¿Quieres solicitar una asesoría con {{ programador.nombre }}?</p>
+            <a routerLink="/login" class="login-link">Inicia sesión para contactar</a>
+        </div>
+    </main>
+</div>

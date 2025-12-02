@@ -1,0 +1,41 @@
+<div class="home-container">
+  <header class="home-header">
+    <div class="logo">Portafolio Devs</div>
+    <nav>
+      <a routerLink="/login" class="nav-link">Iniciar Sesión</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Encuentra al programador ideal para tu proyecto</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Buscar por nombre, especialidad o tecnología..." [(ngModel)]="terminoBusqueda"
+        (input)="filtrarProgramadores()">
+    </div>
+  </section>
+
+  <section class="programmers-list">
+    <div *ngFor="let dev of programadoresFiltrados" class="dev-card">
+      <div class="dev-header">
+        <img [src]="dev.fotoPerfil || 'assets/default-avatar.png'" alt="{{ dev.nombre }}" class="avatar">
+        <div class="dev-info">
+          <h3>{{ dev.nombre }}</h3>
+          <span class="specialty">{{ dev.especialidad || 'Programador' }}</span>
+        </div>
+      </div>
+      <p class="bio">{{ dev.descripcion | slice:0:100 }}{{ dev.descripcion && dev.descripcion.length > 100 ? '...' : ''
+        }}</p>
+
+      <div class="skills" *ngIf="dev.tecnologias">
+        <span *ngFor="let tech of dev.tecnologias | slice:0:3" class="skill-tag">{{ tech }}</span>
+        <span *ngIf="dev.tecnologias.length > 3" class="more-tag">+{{ dev.tecnologias.length - 3 }}</span>
+      </div>
+
+      <button [routerLink]="['/perfil', dev.uid]" class="view-profile-btn">Ver Perfil Completo</button>
+    </div>
+
+    <div *ngIf="programadoresFiltrados.length === 0" class="no-results">
+      <p>No se encontraron programadores que coincidan con tu búsqueda.</p>
+    </div>
+  </section>
+</div>
