@@ -5,10 +5,9 @@ import emailjs from '@emailjs/browser';
     providedIn: 'root'
 })
 export class EmailServicio {
-    // TODO: Reemplazar con tus credenciales de EmailJS
-    // Regístrate en https://www.emailjs.com/
+    // Credenciales de EmailJS
     private serviceID = 'service_ezyc52o';
-    private templateID = 'template_jwx9w87';
+    private templateID = 'template_hkv2dry'; // Auto-Reply template
     private publicKey = 'gtJmEyPPBtyy3sUBw';
 
     constructor() {
