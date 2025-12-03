@@ -4,7 +4,7 @@
 }
 
 .panel-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     padding: 25px;
     display: flex;
     justify-content: space-between;
@@ -65,7 +65,7 @@
     }
 
     .solicitudes-btn {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        background: #4facfe;
         color: white;
         padding: 10px 20px;
         border-radius: 25px;
@@ -100,7 +100,7 @@
     }
 
     .logout-btn {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: #f093fb;
         color: white;
         padding: 10px 20px;
         border-radius: 25px;
@@ -269,7 +269,7 @@
         .ver-perfil-btn {
             width: 100%;
             padding: 0.9rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             border: none;
             border-radius: 10px;
             color: #fff;
@@ -360,17 +360,17 @@
             white-space: nowrap;
 
             &.estado-pendiente {
-                background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+                background: #ffeaa7;
                 color: #d63031;
             }
 
             &.estado-aprobada {
-                background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
+                background: #55efc4;
                 color: #00563f;
             }
 
             &.estado-rechazada {
-                background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+                background: #ff7675;
                 color: white;
             }
         }
@@ -409,7 +409,7 @@
 }
 
 .back-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     padding: 10px 20px;
     border-radius: 25px;
@@ -427,7 +427,7 @@
 }
 
 .primary-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     padding: 12px 30px;
     border-radius: 25px;

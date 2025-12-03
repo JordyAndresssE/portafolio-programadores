@@ -4,7 +4,7 @@
 }
 
 .programmer-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   padding: 25px;
   display: flex;
   justify-content: space-between;
@@ -31,7 +31,7 @@
 }
 
 .logout-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: #f093fb;
   color: white;
   padding: 10px 20px;
   border-radius: 25px;
@@ -95,7 +95,7 @@
 }
 
 .add-btn {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: #4facfe;
   color: white;
   padding: 12px 24px;
   border-radius: 25px;
@@ -160,12 +160,12 @@
     font-weight: 600;
 
     &.type {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      background: #4facfe;
       color: white;
     }
 
     &.role {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #667eea;
       color: white;
     }
   }
@@ -209,7 +209,7 @@
   }
 
   .edit-btn {
-    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    background: #ffeaa7;
     color: #2d3436;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -221,7 +221,7 @@
   }
 
   .delete-btn {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #f093fb;
     color: white;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -262,7 +262,7 @@
   text-align: right;
 
   .save-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     padding: 12px 35px;
     border-radius: 25px;
@@ -327,17 +327,17 @@
   text-transform: uppercase;
 
   &.pendiente {
-    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    background: #ffeaa7;
     color: #2d3436;
   }
 
   &.aprobada {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: #4facfe;
     color: white;
   }
 
   &.rechazada {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #f093fb;
     color: white;
   }
 }
@@ -375,7 +375,7 @@
   }
 
   .accept-btn {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: #4facfe;
     color: white;
     box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
   }
@@ -386,7 +386,7 @@
   }
 
   .reject-btn {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #f093fb;
     color: white;
     box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
   }
@@ -400,7 +400,7 @@
 .advisory-response {
   margin-top: 12px;
   padding: 15px;
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+  background: #f0f4ff;
   border-radius: 12px;
   border: 2px dashed #667eea;
 }
@@ -432,7 +432,7 @@
 
   h3 {
     margin-top: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -522,17 +522,17 @@
   text-transform: uppercase;
 
   &.pendiente {
-    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    background: #ffeaa7;
     color: #2d3436;
   }
 
   &.aprobada {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: #4facfe;
     color: white;
   }
 
   &.rechazada {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #f093fb;
     color: white;
   }
 }
@@ -570,7 +570,7 @@
   }
 
   .accept-btn {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: #4facfe;
     color: white;
     box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
   }
@@ -581,7 +581,7 @@
   }
 
   .reject-btn {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #f093fb;
     color: white;
     box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
   }
@@ -595,7 +595,7 @@
 .advisory-response {
   margin-top: 12px;
   padding: 15px;
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+  background: #f0f4ff;
   border-radius: 12px;
   border: 2px dashed #667eea;
 }
@@ -627,7 +627,7 @@
 
   h3 {
     margin-top: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -690,7 +690,7 @@
   }
 
   .save-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   }
@@ -701,7 +701,7 @@
   }
 
   .cancel-btn {
-    background: linear-gradient(135deg, #a8b8d8 0%, #8b9dc3 100%);
+    background: #a8b8d8;
     color: white;
     box-shadow: 0 4px 12px rgba(139, 157, 195, 0.3);
   }

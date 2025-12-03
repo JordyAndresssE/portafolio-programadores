@@ -17,13 +17,14 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
 
 .modal-content {
-  background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+  background: #1e1e2e;
   border-radius: 24px;
   padding: 40px;
   max-width: 900px;
@@ -37,6 +38,7 @@
     transform: translateY(50px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -52,7 +54,7 @@
     font-weight: 700;
     color: #fff;
     margin: 0 0 10px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -73,7 +75,7 @@
 }
 
 .role-card {
-  background: linear-gradient(135deg, #2a2a3e 0%, #1e1e2e 100%);
+  background: #2a2a3e;
   border: 2px solid #3a3a4e;
   border-radius: 16px;
   padding: 30px;
@@ -89,7 +91,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    background: rgba(102, 126, 234, 0.1);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -104,7 +106,7 @@
     }
 
     .select-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #667eea;
       transform: scale(1.05);
     }
   }
@@ -152,7 +154,7 @@
   .select-btn {
     width: 100%;
     padding: 14px 24px;
-    background: linear-gradient(135deg, #3a3a4e 0%, #2a2a3e 100%);
+    background: #3a3a4e;
     color: #fff;
     border: 2px solid #667eea;
     border-radius: 12px;
@@ -164,7 +166,7 @@
     z-index: 1;
 
     &:hover {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #667eea;
       border-color: #764ba2;
     }
   }
