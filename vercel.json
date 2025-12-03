@@ -1,14 +1,8 @@
 {
-    "buildCommand": "npm run build",
-    "outputDirectory": "dist/portafolio-programadores/browser",
-    "routes": [
+    "rewrites": [
         {
-            "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|webp|ico|json|woff|woff2|ttf|eot))",
-            "dest": "/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
+            "source": "/(.*)",
+            "destination": "/"
         }
     ]
 }
