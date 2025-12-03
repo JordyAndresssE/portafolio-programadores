@@ -22,6 +22,10 @@ export class PanelProgramadorComponent implements OnInit {
   asesorias: Asesoria[] = [];
   seccionActiva: 'proyectos' | 'perfil' | 'asesorias' = 'proyectos';
 
+  // Estados de carga
+  cargandoProyectos = true;
+  cargandoAsesorias = true;
+
   // Perfil
   perfilForm: Usuario | null = null;
 
@@ -63,13 +67,31 @@ export class PanelProgramadorComponent implements OnInit {
   }
 
   cargarProyectos() {
-    this.proyectosService.obtenerMisProyectos().subscribe(p => this.proyectos = p);
+    this.cargandoProyectos = true;
+    this.proyectosService.obtenerMisProyectos().subscribe({
+      next: (p) => {
+        this.proyectos = p;
+        this.cargandoProyectos = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar proyectos:', error);
+        this.cargandoProyectos = false;
+      }
+    });
   }
 
   cargarAsesorias() {
     if (this.usuario?.uid) {
-      this.asesoriasService.obtenerAsesoriasPorProgramador(this.usuario.uid).subscribe(a => {
-        this.asesorias = a;
+      this.cargandoAsesorias = true;
+      this.asesoriasService.obtenerAsesoriasPorProgramador(this.usuario.uid).subscribe({
+        next: (a) => {
+          this.asesorias = a;
+          this.cargandoAsesorias = false;
+        },
+        error: (error) => {
+          console.error('Error al cargar asesorías:', error);
+          this.cargandoAsesorias = false;
+        }
       });
     }
   }

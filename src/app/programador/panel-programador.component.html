@@ -23,7 +23,14 @@
                 <button (click)="abrirModalProyecto()" class="add-btn">+ Nuevo Proyecto</button>
             </div>
 
-            <div class="projects-grid">
+            <!-- Indicador de carga -->
+            <div *ngIf="cargandoProyectos" class="empty-state">
+                <div class="spinner"></div>
+                <p>Cargando proyectos...</p>
+            </div>
+
+            <!-- Grid de proyectos -->
+            <div class="projects-grid" *ngIf="!cargandoProyectos">
                 <div *ngFor="let proyecto of proyectos" class="project-card">
                     <h3>{{ proyecto.nombre }}</h3>
                     <p class="desc">{{ proyecto.descripcion }}</p>
@@ -41,7 +48,8 @@
                 </div>
             </div>
 
-            <div *ngIf="proyectos.length === 0" class="empty-state">
+            <!-- Estado vacío -->
+            <div *ngIf="!cargandoProyectos && proyectos.length === 0" class="empty-state">
                 <p>No tienes proyectos registrados aún.</p>
             </div>
         </section>
@@ -105,7 +113,14 @@
         <section *ngIf="seccionActiva === 'asesorias'" class="advisories-section">
             <h2>Solicitudes de Asesoría</h2>
 
-            <div class="advisories-list">
+            <!-- Indicador de carga -->
+            <div *ngIf="cargandoAsesorias" class="empty-state">
+                <div class="spinner"></div>
+                <p>Cargando asesorías...</p>
+            </div>
+
+            <!-- Lista de asesorías -->
+            <div class="advisories-list" *ngIf="!cargandoAsesorias">
                 <div *ngFor="let asesoria of asesorias" class="advisory-card"
                     [class.pending]="asesoria.estado === 'pendiente'">
                     <div class="advisory-header">
@@ -132,7 +147,8 @@
                 </div>
             </div>
 
-            <div *ngIf="asesorias.length === 0" class="empty-state">
+            <!-- Estado vacío -->
+            <div *ngIf="!cargandoAsesorias && asesorias.length === 0" class="empty-state">
                 <p>No tienes solicitudes de asesoría pendientes.</p>
             </div>
         </section>
