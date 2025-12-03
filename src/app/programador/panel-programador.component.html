@@ -125,7 +125,7 @@
                     [class.pending]="asesoria.estado === 'pendiente'">
                     <div class="advisory-header">
                         <span class="status-badge" [ngClass]="asesoria.estado">{{ asesoria.estado | titlecase }}</span>
-                        <span class="date">{{ asesoria.fechaSolicitud | date:'mediumDate' }}</span>
+                        <span class="date">{{ convertirTimestamp(asesoria.fechaSolicitud) | date:'mediumDate' }}</span>
                     </div>
 
                     <div class="advisory-body">

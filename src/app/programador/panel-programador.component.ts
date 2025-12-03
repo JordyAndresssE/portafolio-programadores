@@ -100,6 +100,14 @@ export class PanelProgramadorComponent implements OnInit {
     this.authService.cerrarSesion();
   }
 
+  // Helper para convertir Timestamp de Firebase a Date
+  convertirTimestamp(timestamp: any): Date {
+    if (timestamp && timestamp.toDate) {
+      return timestamp.toDate();
+    }
+    return timestamp;
+  }
+
   // --- Lógica de Asesorías ---
   async responderAsesoria(asesoria: Asesoria, estado: 'aprobada' | 'rechazada') {
     const mensaje = prompt(`Mensaje opcional para ${estado === 'aprobada' ? 'aprobar' : 'rechazar'} la solicitud:`);
