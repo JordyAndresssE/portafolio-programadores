@@ -3,7 +3,7 @@
     <header class="panel-header">
         <div class="header-content">
             <div class="logo">
-                <h1>📁 Portafolio Devs</h1>
+                <h1>Portafolio Devs</h1>
             </div>
 
             <div class="user-menu" *ngIf="usuario$ | async as usuario">
@@ -16,11 +16,11 @@
                     </div>
                 </div>
                 <button (click)="cambiarVista('solicitudes')" class="solicitudes-btn">
-                    📋 Mis Solicitudes
+                    Mis Solicitudes
                     <span class="badge" *ngIf="solicitudes.length > 0">{{ solicitudes.length }}</span>
                 </button>
                 <button (click)="cerrarSesion()" class="logout-btn">
-                    🚪 Cerrar Sesión
+                    Cerrar Sesión
                 </button>
             </div>
         </div>
@@ -82,7 +82,7 @@
 
                 <!-- Empty State -->
                 <div *ngIf="!cargando && programadores.length === 0" class="empty-state">
-                    <div class="empty-icon">👨‍💻</div>
+                    <div class="empty-icon"></div>
                     <h3>No hay programadores disponibles</h3>
                     <p>Vuelve pronto para encontrar desarrolladores profesionales</p>
                 </div>
@@ -115,19 +115,19 @@
 
                         <div class="solicitud-body">
                             <div class="detalle-item">
-                                <span class="label">📅 Fecha de Asesoría:</span>
+                                <span class="label">Fecha de Asesoría:</span>
                                 <span class="value">{{ solicitud.fechaAsesoria }}</span>
                             </div>
                             <div class="detalle-item">
-                                <span class="label">🕐 Hora:</span>
+                                <span class="label">Hora:</span>
                                 <span class="value">{{ solicitud.horaAsesoria }}</span>
                             </div>
                             <div class="detalle-item" *ngIf="solicitud.motivo">
-                                <span class="label">💬 Motivo:</span>
+                                <span class="label">Motivo:</span>
                                 <span class="value">{{ solicitud.motivo }}</span>
                             </div>
                             <div class="detalle-item" *ngIf="solicitud.mensajeRespuesta">
-                                <span class="label">📝 Respuesta del Programador:</span>
+                                <span class="label">Respuesta del Programador:</span>
                                 <span class="value mensaje-respuesta">{{ solicitud.mensajeRespuesta }}</span>
                             </div>
                         </div>
@@ -136,7 +136,7 @@
 
                 <!-- Empty State Solicitudes -->
                 <div *ngIf="solicitudes.length === 0" class="empty-state">
-                    <div class="empty-icon">📋</div>
+                    <div class="empty-icon"></div>
                     <h3>No tienes solicitudes aún</h3>
                     <p>Explora los perfiles de programadores y solicita una asesoría</p>
                     <button (click)="cambiarVista('programadores')" class="primary-btn">

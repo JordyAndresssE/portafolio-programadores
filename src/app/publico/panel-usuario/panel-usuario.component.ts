@@ -83,11 +83,11 @@ export class PanelUsuarioComponent implements OnInit {
     obtenerEstadoTexto(estado: string): string {
         switch (estado) {
             case 'aprobada':
-                return '✅ Aprobada';
+                return 'Aprobada';
             case 'rechazada':
-                return '❌ Rechazada';
+                return 'Rechazada';
             default:
-                return '⏳ Pendiente';
+                return 'Pendiente';
         }
     }
 
