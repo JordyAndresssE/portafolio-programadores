@@ -6,10 +6,14 @@
     </div>
 
     <button (click)="login()" class="google-btn" [disabled]="cargando">
-      <span *ngIf="!cargando">🔐 Iniciar sesión con Google</span>
+      <span *ngIf="!cargando">Iniciar sesión con Google</span>
       <span *ngIf="cargando">Cargando...</span>
     </button>
 
     <p class="info-text">Al iniciar sesión, aceptas nuestros términos y condiciones</p>
   </div>
 </div>
+
+<!-- Modal de selección de rol para nuevos usuarios -->
+<app-seleccion-rol-modal *ngIf="mostrarModalRol" (rolSeleccionado)="onRolSeleccionado($event)">
+</app-seleccion-rol-modal>

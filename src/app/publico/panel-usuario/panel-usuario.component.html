@@ -1,0 +1,84 @@
+<div class="panel-container">
+    <!-- Header -->
+    <header class="panel-header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>📁 Portafolio Devs</h1>
+            </div>
+
+            <div class="user-menu" *ngIf="usuario$ | async as usuario">
+                <div class="user-info">
+                    <img [src]="usuario.fotoPerfil || 'https://via.placeholder.com/40'" [alt]="usuario.nombre"
+                        class="user-avatar">
+                    <div class="user-details">
+                        <span class="user-name">{{ usuario.nombre }}</span>
+                        <span class="user-role">Cliente</span>
+                    </div>
+                </div>
+                <button (click)="cerrarSesion()" class="logout-btn">
+                    🚪 Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h2>Encuentra tu Programador Ideal</h2>
+                <p>Explora perfiles de desarrolladores profesionales y agenda asesorías personalizadas</p>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="cargando" class="loading-container">
+                <div class="spinner"></div>
+                <p>Cargando programadores...</p>
+            </div>
+
+            <!-- Programmers Grid -->
+            <div *ngIf="!cargando && programadores.length > 0" class="programadores-grid">
+                <div *ngFor="let programador of programadores" class="programador-card">
+                    <div class="card-header">
+                        <img [src]="programador.fotoPerfil || 'https://via.placeholder.com/80'"
+                            [alt]="programador.nombre" class="programador-avatar">
+                        <div class="programador-info">
+                            <h3>{{ programador.nombre }}</h3>
+                            <p class="especialidad" *ngIf="programador.especialidad">
+                                {{ programador.especialidad }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="descripcion" *ngIf="programador.descripcion">
+                            {{ programador.descripcion }}
+                        </p>
+
+                        <div class="tecnologias" *ngIf="programador.tecnologias && programador.tecnologias.length > 0">
+                            <span *ngFor="let tech of programador.tecnologias.slice(0, 4)" class="tech-badge">
+                                {{ tech }}
+                            </span>
+                            <span *ngIf="programador.tecnologias.length > 4" class="tech-badge more">
+                                +{{ programador.tecnologias.length - 4 }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button (click)="verPerfil(programador.uid)" class="ver-perfil-btn">
+                            Ver Perfil Completo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!cargando && programadores.length === 0" class="empty-state">
+                <div class="empty-icon">👨‍💻</div>
+                <h3>No hay programadores disponibles</h3>
+                <p>Vuelve pronto para encontrar desarrolladores profesionales</p>
+            </div>
+        </div>
+    </main>
+</div>

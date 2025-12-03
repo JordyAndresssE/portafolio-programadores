@@ -17,6 +17,7 @@ export class AutenticacionServicio {
   private injector: Injector = inject(Injector);
 
   usuario$: Observable<Usuario | null>;
+  private usuarioPendiente: FirebaseUser | null = null;
 
   constructor() {
     this.usuario$ = authState(this.auth).pipe(
@@ -50,43 +51,62 @@ export class AutenticacionServicio {
     );
   }
 
-  async iniciarSesionGoogle() {
+  async iniciarSesionGoogle(): Promise<boolean> {
     const provider = new GoogleAuthProvider();
     try {
       const credencial = await signInWithPopup(this.auth, provider);
       const user = credencial.user;
-      
+
       // Ejecutamos la lógica de base de datos dentro del contexto de inyección para evitar errores de AngularFire
-      runInInjectionContext(this.injector, async () => {
+      return await runInInjectionContext(this.injector, async () => {
         // Verificar si el usuario ya existe en Firestore
         const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
         const userDoc = await getDoc(userDocRef);
 
-        let datosUsuario: Usuario;
-
         if (!userDoc.exists()) {
-          // Si es la primera vez, lo registramos. 
-          const nuevoUsuario: Usuario = {
-            uid: user.uid,
-            email: user.email || '',
-            nombre: user.displayName || 'Usuario',
-            fotoPerfil: user.photoURL || '',
-            rol: 'programador' 
-          };
-          await setDoc(userDocRef, nuevoUsuario);
-          datosUsuario = nuevoUsuario;
+          // Es un nuevo usuario, guardar temporalmente para asignar rol después
+          this.usuarioPendiente = user;
+          return true; // Es nuevo usuario
         } else {
-          datosUsuario = userDoc.data() as Usuario;
+          // Usuario existente, redirigir según su rol
+          const datosUsuario = userDoc.data() as Usuario;
+          console.log('Usuario existente autenticado:', datosUsuario);
+          this.redirigirSegunRol(datosUsuario);
+          return false; // No es nuevo usuario
         }
-        
-        // Redirigir usando los datos obtenidos directamente
-        console.log('Usuario autenticado:', datosUsuario);
-        this.redirigirSegunRol(datosUsuario);
       });
 
     } catch (error) {
       console.error('Error al iniciar sesión con Google:', error);
+      throw error;
     }
+  }
+
+  async establecerRolYRedirigir(rol: 'programador' | 'usuario'): Promise<void> {
+    if (!this.usuarioPendiente) {
+      console.error('No hay usuario pendiente para establecer rol');
+      return;
+    }
+
+    const user = this.usuarioPendiente;
+
+    await runInInjectionContext(this.injector, async () => {
+      const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
+
+      const nuevoUsuario: Usuario = {
+        uid: user.uid,
+        email: user.email || '',
+        nombre: user.displayName || 'Usuario',
+        fotoPerfil: user.photoURL || '',
+        rol: rol
+      };
+
+      await setDoc(userDocRef, nuevoUsuario);
+      console.log('Nuevo usuario registrado con rol:', rol);
+
+      this.usuarioPendiente = null;
+      this.redirigirSegunRol(nuevoUsuario);
+    });
   }
 
   async cerrarSesion() {
@@ -98,15 +118,17 @@ export class AutenticacionServicio {
 
   private redirigirSegunRol(usuario: Usuario | null) {
     if (!usuario) return;
-    
+
     this.ngZone.run(() => {
       switch (usuario.rol) {
         case 'administrador':
           this.router.navigate(['/admin']);
           break;
         case 'programador':
-        case 'usuario': // AHORA: 'usuario' también va al panel de programador
           this.router.navigate(['/programador']);
+          break;
+        case 'usuario':
+          this.router.navigate(['/usuario']);
           break;
         default:
           this.router.navigate(['/login']);
