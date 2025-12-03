@@ -1,8 +1,14 @@
 {
-    "rewrites": [
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist/portafolio-programadores/browser",
+    "routes": [
         {
-            "source": "/(.*)",
-            "destination": "/index.html"
+            "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|webp|ico|json|woff|woff2|ttf|eot))",
+            "dest": "/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/index.html"
         }
     ]
 }
