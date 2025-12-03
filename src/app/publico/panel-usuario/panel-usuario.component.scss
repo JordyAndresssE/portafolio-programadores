@@ -1,16 +1,15 @@
 .panel-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+    background: #f5f7fa;
 }
 
 .panel-header {
-    background: rgba(30, 30, 46, 0.8);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 1rem 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 
     .header-content {
         max-width: 1400px;
@@ -19,17 +18,14 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
     }
 
     .logo h1 {
-        font-size: 1.5rem;
+        font-size: 28px;
         font-weight: 700;
-        color: #fff;
+        color: white;
         margin: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
     }
 
     .user-menu {
@@ -41,14 +37,14 @@
     .user-info {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 15px;
     }
 
     .user-avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        border: 2px solid #667eea;
+        border: 2px solid white;
         object-fit: cover;
     }
 
@@ -59,39 +55,38 @@
         .user-name {
             font-size: 0.95rem;
             font-weight: 600;
-            color: #fff;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .user-role {
             font-size: 0.8rem;
-            color: #a0a0b0;
+            color: rgba(255, 255, 255, 0.7);
         }
     }
 
     .logout-btn {
-        padding: 0.6rem 1.2rem;
-        background: rgba(102, 126, 234, 0.1);
-        border: 1px solid #667eea;
-        border-radius: 8px;
-        color: #667eea;
-        font-size: 0.9rem;
-        font-weight: 600;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
         cursor: pointer;
+        font-weight: 600;
         transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+        border: none;
 
         &:hover {
-            background: #667eea;
-            color: #fff;
             transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(245, 87, 108, 0.4);
         }
     }
 }
 
 .main-content {
-    padding: 3rem 0;
+    padding: 30px 20px;
 
     .content-wrapper {
-        max-width: 1400px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 0 2rem;
     }
@@ -103,17 +98,13 @@
         h2 {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #fff;
+            color: #2c3e50;
             margin: 0 0 1rem 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         p {
             font-size: 1.1rem;
-            color: #a0a0b0;
+            color: #718096;
             margin: 0;
         }
     }
@@ -137,7 +128,7 @@
 
     p {
         margin-top: 1rem;
-        color: #a0a0b0;
+        color: #718096;
         font-size: 1rem;
     }
 }
@@ -155,12 +146,13 @@
 }
 
 .programador-card {
-    background: linear-gradient(135deg, #2a2a3e 0%, #1e1e2e 100%);
-    border: 1px solid #3a3a4e;
+    background: white;
+    border: 2px solid transparent;
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 25px;
     transition: all 0.3s ease;
     cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
     &:hover {
         transform: translateY(-8px);
@@ -188,7 +180,7 @@
             h3 {
                 font-size: 1.3rem;
                 font-weight: 700;
-                color: #fff;
+                color: #1a202c;
                 margin: 0 0 0.25rem 0;
             }
 
@@ -206,7 +198,7 @@
 
         .descripcion {
             font-size: 0.95rem;
-            color: #c0c0d0;
+            color: #4a5568;
             line-height: 1.6;
             margin: 0 0 1rem 0;
             display: -webkit-box;
@@ -222,7 +214,7 @@
 
             .tech-badge {
                 padding: 0.4rem 0.8rem;
-                background: rgba(102, 126, 234, 0.1);
+                background: #f0f4ff;
                 border: 1px solid rgba(102, 126, 234, 0.3);
                 border-radius: 6px;
                 color: #667eea;
@@ -272,13 +264,13 @@
     h3 {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #fff;
+        color: #2c3e50;
         margin: 0 0 0.5rem 0;
     }
 
     p {
         font-size: 1rem;
-        color: #a0a0b0;
+        color: #718096;
         margin: 0;
     }
 }
