@@ -116,6 +116,10 @@ export class AutenticacionServicio {
     });
   }
 
+  async obtenerUsuarioActual(): Promise<FirebaseUser | null> {
+    return this.auth.currentUser;
+  }
+
   private redirigirSegunRol(usuario: Usuario | null) {
     if (!usuario) return;
 

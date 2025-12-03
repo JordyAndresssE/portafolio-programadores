@@ -15,6 +15,10 @@
                         <span class="user-role">Cliente</span>
                     </div>
                 </div>
+                <button (click)="cambiarVista('solicitudes')" class="solicitudes-btn">
+                    📋 Mis Solicitudes
+                    <span class="badge" *ngIf="solicitudes.length > 0">{{ solicitudes.length }}</span>
+                </button>
                 <button (click)="cerrarSesion()" class="logout-btn">
                     🚪 Cerrar Sesión
                 </button>
@@ -25,59 +29,120 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="content-wrapper">
-            <div class="page-header">
-                <h2>Encuentra tu Programador Ideal</h2>
-                <p>Explora perfiles de desarrolladores profesionales y agenda asesorías personalizadas</p>
-            </div>
+            <!-- Vista de Programadores -->
+            <div *ngIf="vistaActual === 'programadores'">
+                <div class="page-header">
+                    <h2>Encuentra tu Programador Ideal</h2>
+                    <p>Explora perfiles de desarrolladores profesionales y agenda asesorías personalizadas</p>
+                </div>
 
-            <!-- Loading State -->
-            <div *ngIf="cargando" class="loading-container">
-                <div class="spinner"></div>
-                <p>Cargando programadores...</p>
-            </div>
+                <!-- Loading State -->
+                <div *ngIf="cargando" class="loading-container">
+                    <div class="spinner"></div>
+                    <p>Cargando programadores...</p>
+                </div>
 
-            <!-- Programmers Grid -->
-            <div *ngIf="!cargando && programadores.length > 0" class="programadores-grid">
-                <div *ngFor="let programador of programadores" class="programador-card">
-                    <div class="card-header">
-                        <img [src]="programador.fotoPerfil || 'https://via.placeholder.com/80'"
-                            [alt]="programador.nombre" class="programador-avatar">
-                        <div class="programador-info">
-                            <h3>{{ programador.nombre }}</h3>
-                            <p class="especialidad" *ngIf="programador.especialidad">
-                                {{ programador.especialidad }}
+                <!-- Programmers Grid -->
+                <div *ngIf="!cargando && programadores.length > 0" class="programadores-grid">
+                    <div *ngFor="let programador of programadores" class="programador-card">
+                        <div class="card-header">
+                            <img [src]="programador.fotoPerfil || 'https://via.placeholder.com/80'"
+                                [alt]="programador.nombre" class="programador-avatar">
+                            <div class="programador-info">
+                                <h3>{{ programador.nombre }}</h3>
+                                <p class="especialidad" *ngIf="programador.especialidad">
+                                    {{ programador.especialidad }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="descripcion" *ngIf="programador.descripcion">
+                                {{ programador.descripcion }}
                             </p>
+
+                            <div class="tecnologias"
+                                *ngIf="programador.tecnologias && programador.tecnologias.length > 0">
+                                <span *ngFor="let tech of programador.tecnologias.slice(0, 4)" class="tech-badge">
+                                    {{ tech }}
+                                </span>
+                                <span *ngIf="programador.tecnologias.length > 4" class="tech-badge more">
+                                    +{{ programador.tecnologias.length - 4 }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button (click)="verPerfil(programador.uid)" class="ver-perfil-btn">
+                                Ver Perfil Completo
+                            </button>
                         </div>
                     </div>
+                </div>
 
-                    <div class="card-body">
-                        <p class="descripcion" *ngIf="programador.descripcion">
-                            {{ programador.descripcion }}
-                        </p>
-
-                        <div class="tecnologias" *ngIf="programador.tecnologias && programador.tecnologias.length > 0">
-                            <span *ngFor="let tech of programador.tecnologias.slice(0, 4)" class="tech-badge">
-                                {{ tech }}
-                            </span>
-                            <span *ngIf="programador.tecnologias.length > 4" class="tech-badge more">
-                                +{{ programador.tecnologias.length - 4 }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="card-footer">
-                        <button (click)="verPerfil(programador.uid)" class="ver-perfil-btn">
-                            Ver Perfil Completo
-                        </button>
-                    </div>
+                <!-- Empty State -->
+                <div *ngIf="!cargando && programadores.length === 0" class="empty-state">
+                    <div class="empty-icon">👨‍💻</div>
+                    <h3>No hay programadores disponibles</h3>
+                    <p>Vuelve pronto para encontrar desarrolladores profesionales</p>
                 </div>
             </div>
 
-            <!-- Empty State -->
-            <div *ngIf="!cargando && programadores.length === 0" class="empty-state">
-                <div class="empty-icon">👨‍💻</div>
-                <h3>No hay programadores disponibles</h3>
-                <p>Vuelve pronto para encontrar desarrolladores profesionales</p>
+            <!-- Vista de Solicitudes -->
+            <div *ngIf="vistaActual === 'solicitudes'">
+                <div class="page-header">
+                    <button (click)="cambiarVista('programadores')" class="back-btn">
+                        ← Volver a Programadores
+                    </button>
+                    <h2>Mis Solicitudes de Asesoría</h2>
+                    <p>Revisa el estado de tus solicitudes de asesoría</p>
+                </div>
+
+                <!-- Solicitudes List -->
+                <div *ngIf="solicitudes.length > 0" class="solicitudes-list">
+                    <div *ngFor="let solicitud of solicitudes" class="solicitud-card">
+                        <div class="solicitud-header">
+                            <div class="solicitud-info">
+                                <h3>Asesoría Solicitada</h3>
+                                <p class="fecha-solicitud">
+                                    Solicitado el: {{ solicitud.fechaSolicitud.toDate() | date:'dd/MM/yyyy HH:mm' }}
+                                </p>
+                            </div>
+                            <span [class]="'estado-badge ' + obtenerEstadoClase(solicitud.estado)">
+                                {{ obtenerEstadoTexto(solicitud.estado) }}
+                            </span>
+                        </div>
+
+                        <div class="solicitud-body">
+                            <div class="detalle-item">
+                                <span class="label">📅 Fecha de Asesoría:</span>
+                                <span class="value">{{ solicitud.fechaAsesoria }}</span>
+                            </div>
+                            <div class="detalle-item">
+                                <span class="label">🕐 Hora:</span>
+                                <span class="value">{{ solicitud.horaAsesoria }}</span>
+                            </div>
+                            <div class="detalle-item" *ngIf="solicitud.motivo">
+                                <span class="label">💬 Motivo:</span>
+                                <span class="value">{{ solicitud.motivo }}</span>
+                            </div>
+                            <div class="detalle-item" *ngIf="solicitud.mensajeRespuesta">
+                                <span class="label">📝 Respuesta del Programador:</span>
+                                <span class="value mensaje-respuesta">{{ solicitud.mensajeRespuesta }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State Solicitudes -->
+                <div *ngIf="solicitudes.length === 0" class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <h3>No tienes solicitudes aún</h3>
+                    <p>Explora los perfiles de programadores y solicita una asesoría</p>
+                    <button (click)="cambiarVista('programadores')" class="primary-btn">
+                        Ver Programadores
+                    </button>
+                </div>
             </div>
         </div>
     </main>
