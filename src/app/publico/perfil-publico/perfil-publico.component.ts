@@ -6,6 +6,7 @@ import { UsuariosServicio } from '../../servicios/usuarios.servicio';
 import { ProyectosServicio } from '../../servicios/proyectos.servicio';
 import { AutenticacionServicio } from '../../servicios/autenticacion.servicio';
 import { AsesoriasServicio } from '../../servicios/asesorias.servicio';
+import { EmailServicio } from '../../servicios/email.servicio';
 import { Usuario } from '../../modelos/usuario.modelo';
 import { Proyecto } from '../../modelos/proyecto.modelo';
 import { Asesoria } from '../../modelos/asesoria.modelo';
@@ -33,6 +34,7 @@ export class PerfilPublicoComponent implements OnInit {
   private proyectosService = inject(ProyectosServicio);
   private authService = inject(AutenticacionServicio);
   private asesoriasService = inject(AsesoriasServicio);
+  private emailService = inject(EmailServicio);
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -95,6 +97,17 @@ export class PerfilPublicoComponent implements OnInit {
       };
 
       await this.asesoriasService.crearSolicitud(nuevaAsesoria);
+
+      // Enviar notificación por correo
+      await this.emailService.enviarNotificacionAsesoria(
+        this.programador.email,
+        this.programador.nombre,
+        this.usuarioActual.nombre,
+        this.solicitud.fechaAsesoria!,
+        this.solicitud.horaAsesoria!,
+        this.solicitud.motivo!
+      );
+
       alert('Solicitud enviada con éxito.');
       this.solicitud = { motivo: '', fechaAsesoria: '', horaAsesoria: '' };
     } catch (error) {
