@@ -217,7 +217,7 @@
     border: none;
     padding: 14px 28px;
     border-radius: 14px;
-    cursor: pointer;
+    cursor: pointer !important;
     width: 100%;
     font-size: 15px;
     font-weight: 700;
@@ -225,6 +225,9 @@
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
 
     &:hover {
       background: var(--primary-color);

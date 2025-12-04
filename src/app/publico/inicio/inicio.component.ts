@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { UsuariosServicio } from '../../servicios/usuarios.servicio';
 import { Usuario } from '../../modelos/usuario.modelo';
 
@@ -18,6 +18,7 @@ export class InicioComponent implements OnInit {
   terminoBusqueda = '';
 
   private usuariosService = inject(UsuariosServicio);
+  private router = inject(Router);
 
   ngOnInit() {
     this.usuariosService.obtenerTodosLosUsuarios().subscribe(usuarios => {
@@ -42,5 +43,9 @@ export class InicioComponent implements OnInit {
         especialidad.includes(termino) ||
         tecnologias.includes(termino);
     });
+  }
+
+  verPerfil(uid: string) {
+    this.router.navigate(['/perfil', uid]);
   }
 }

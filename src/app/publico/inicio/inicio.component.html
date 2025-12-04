@@ -24,7 +24,7 @@
         <span *ngIf="dev.tecnologias.length > 3" class="more-tag">+{{ dev.tecnologias.length - 3 }}</span>
       </div>
 
-      <button [routerLink]="['/perfil', dev.uid]" class="view-btn">Ver Perfil</button>
+      <button (click)="verPerfil(dev.uid)" class="view-btn">Ver Perfil</button>
     </div>
 
     <div *ngIf="programadoresFiltrados.length === 0" class="no-results">
