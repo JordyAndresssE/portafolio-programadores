@@ -1,59 +1,145 @@
-# PortafolioProgramadores
+# Portafolio Devs – Plataforma para Programadores
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.9.
+Bienvenido a **Portafolio Devs**. Esta aplicación nace con una idea sencilla: conectar a desarrolladores con personas que buscan soluciones reales, en un entorno visual moderno y bien cuidado.
+No es un simple listado. Es una plataforma completa, rápida y lista para escalar, construida con **Angular 20** y **Firebase**.
 
-## Development server
+---
 
-To start a local development server, run:
+## Tecnologías utilizadas
+
+El proyecto está armado con un stack pensado para rendimiento y mantenimiento:
+
+* **Angular 20**: Aprovecha componentes standalone, signals y SSR para una carga inicial más rápida.
+* **Firebase**: Autenticación y base de datos con Firestore.
+* **Vercel**: Despliegue simple y eficiente.
+* **SCSS (Sass)**: Estilos modulares y controlados.
+* **EmailJS**: Notificaciones por correo sin levantar backend adicional.
+* **Diseño propio en UI**: Todo el CSS está escrito a mano, con un tema **dark premium** basado en rojo y negro.
+
+---
+
+## Estructura del proyecto (`src/app`)
+
+La organización está pensada para ubicar cada parte sin perder tiempo:
+
+### Autenticación (`/autenticacion`)
+
+Módulo dedicado al login.
+
+* `inicio-sesion`: Login con Google y asignación de rol a nuevos usuarios.
+
+### Público (`/publico`)
+
+Vista general para cualquier visitante.
+
+* `inicio`: Landing page con buscador de programadores.
+* `perfil-publico`: Vista individual de un desarrollador.
+* `panel-usuario`: Panel para clientes donde manejan sus solicitudes.
+
+### Programador (`/programador`)
+
+Zona exclusiva para los desarrolladores registrados.
+
+* `panel-programador`: Gestión de perfil, proyectos y solicitudes recibidas.
+
+### Administrador (`/administrador`)
+
+* `admin-dashboard`: Panel para controlar usuarios y revisar estadísticas.
+
+### Compartido (`/compartido`)
+
+Componentes usados en toda la aplicación:
+
+* `notificacion`: Sistema propio de toasts.
+* `seleccion-rol-modal`: Modal que aparece cuando un usuario entra por primera vez.
+
+## Servicios (`/servicios`)
+
+Lógica principal del proyecto:
+
+* `autenticacion.servicio.ts`: Manejo de roles y autenticación vía Firebase.
+* `usuarios.servicio.ts`: CRUD completo de perfiles.
+* `email.servicio.ts`: Envío de correos con EmailJS.
+
+---
+
+## Estilos y configuración visual
+
+El diseño se controla desde `src/styles.scss`.
+Los colores principales se ajustan modificando las variables en `:root`:
+
+```scss
+:root {
+  --primary-color: #A10000;
+  --background-color: #000000;
+  /* ... */
+}
+```
+
+Cambias un valor y el tema entero se adapta.
+
+---
+
+## Cómo correr el proyecto
+
+### 1. Requisitos
+
+Node.js 18 o superior.
+
+### 2. Instalación de dependencias
+
+```bash
+npm install
+```
+
+### 3. Configura tus entornos
+
+En la carpeta `src/environments` encontrarás un archivo de ejemplo.
+Debes crear:
+
+* `environment.ts`
+* `environment.development.ts`
+
+Con tus credenciales:
+
+```ts
+export const environment = {
+  production: false,
+  firebase: {
+    apiKey: "TU_API_KEY",
+    authDomain: "TU_PROJECT.firebaseapp.com",
+    projectId: "TU_PROJECT_ID",
+    storageBucket: "TU_PROJECT.appspot.com",
+    messagingSenderId: "...",
+    appId: "..."
+  },
+  emailjs: {
+    serviceId: 'TU_SERVICE_ID',
+    templateId: 'TU_TEMPLATE_ID',
+    publicKey: 'TU_PUBLIC_KEY'
+  }
+};
+```
+
+* En Firebase debes habilitar Google Auth y Firestore.
+* En EmailJS obtienes las claves desde su panel.
+
+### 4. Iniciar el servidor
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Luego abre:
+`http://localhost:4200`
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Comandos útiles
 
-```bash
-ng generate component component-name
-```
+* `npm start` – Inicia el servidor en modo desarrollo.
+* `npm run build` – Genera el build de producción.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Proyecto construido con dedicación y con la intención de ofrecer una experiencia limpia, útil y bien organizada. Disfrútalo.
