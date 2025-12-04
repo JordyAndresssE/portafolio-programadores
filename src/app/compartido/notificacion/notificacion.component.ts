@@ -40,28 +40,42 @@ import { NotificacionServicio, Notificacion } from '../../servicios/notificacion
       z-index: 9999;
       min-width: 350px;
       max-width: 500px;
-      border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-      animation: slideInRight 0.4s ease;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
       
       &.exito {
-        background: #d4f4dd;
-        color: #25855a;
+        background: rgba(18, 18, 18, 0.95);
+        border-left: 4px solid #00ff9d;
+        color: #fff;
+        
+        .icon { color: #00ff9d; }
       }
       
       &.error {
-        background: #fed7d7;
-        color: #c53030;
+        background: rgba(18, 18, 18, 0.95);
+        border-left: 4px solid #ff4444;
+        color: #fff;
+        
+        .icon { color: #ff4444; }
       }
       
       &.advertencia {
-        background: #feebc8;
-        color: #c05621;
+        background: rgba(18, 18, 18, 0.95);
+        border-left: 4px solid #ffaa00;
+        color: #fff;
+        
+        .icon { color: #ffaa00; }
       }
       
       &.info {
-        background: #bee3f8;
-        color: #2c5282;
+        background: rgba(18, 18, 18, 0.95);
+        border-left: 4px solid #A10000;
+        color: #fff;
+        
+        .icon { color: #A10000; }
       }
     }
 
@@ -69,15 +83,19 @@ import { NotificacionServicio, Notificacion } from '../../servicios/notificacion
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 1rem 1.5rem;
+      padding: 1.2rem 1.5rem;
     }
 
     .icon {
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       
       svg {
         width: 24px;
         height: 24px;
+        filter: drop-shadow(0 0 5px currentColor);
       }
     }
 
@@ -85,6 +103,7 @@ import { NotificacionServicio, Notificacion } from '../../servicios/notificacion
       flex: 1;
       font-weight: 500;
       font-size: 0.95rem;
+      line-height: 1.5;
     }
 
     .close-btn {
@@ -92,12 +111,15 @@ import { NotificacionServicio, Notificacion } from '../../servicios/notificacion
       background: none;
       border: none;
       cursor: pointer;
-      padding: 0.25rem;
-      opacity: 0.7;
-      transition: opacity 0.2s ease;
+      padding: 0.5rem;
+      opacity: 0.5;
+      transition: all 0.2s ease;
+      color: white;
+      border-radius: 50%;
 
       &:hover {
         opacity: 1;
+        background: rgba(255, 255, 255, 0.1);
       }
 
       svg {
@@ -109,11 +131,11 @@ import { NotificacionServicio, Notificacion } from '../../servicios/notificacion
     @keyframes slideInRight {
       from {
         opacity: 0;
-        transform: translateX(100%);
+        transform: translateX(100%) scale(0.9);
       }
       to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
       }
     }
 
@@ -135,7 +157,7 @@ export class NotificacionComponent implements OnInit {
   ngOnInit() {
     this.notificacionService.notificacion$.subscribe(notif => {
       this.notificacion = notif;
-      
+
       if (this.timeoutId) {
         clearTimeout(this.timeoutId);
       }
