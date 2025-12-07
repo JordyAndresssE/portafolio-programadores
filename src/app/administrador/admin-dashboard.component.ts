@@ -4,6 +4,7 @@ import { UsuariosServicio } from '../servicios/usuarios.servicio';
 import { Usuario } from '../modelos/usuario.modelo';
 import { FormsModule } from '@angular/forms';
 import { AutenticacionServicio } from '../servicios/autenticacion.servicio';
+import { NotificacionServicio } from '../servicios/notificacion.servicio';
 import { FilterPipe } from '../compartido/filter.pipe';
 
 @Component({
@@ -22,6 +23,7 @@ export class AdminDashboardComponent implements OnInit {
 
   private usuariosService = inject(UsuariosServicio);
   private authService = inject(AutenticacionServicio);
+  private notificacionService = inject(NotificacionServicio);
 
   ngOnInit() {
     this.cargarUsuarios();
@@ -92,17 +94,34 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   async guardarCambios() {
-    if (this.usuarioSeleccionado) {
-      this.guardando = true;
-      try {
-        await this.usuariosService.actualizarUsuario(this.usuarioSeleccionado);
-        this.usuarioSeleccionado = null;
-      } catch (error) {
-        console.error('Error al actualizar usuario:', error);
-        alert('Error al guardar cambios');
-      } finally {
-        this.guardando = false;
-      }
+    if (!this.usuarioSeleccionado) return;
+
+    // Confirmación antes de guardar
+    const confirmar = confirm(
+      `¿Estás seguro de que deseas guardar los cambios para ${this.usuarioSeleccionado.nombre}?\n\n` +
+      `Rol: ${this.usuarioSeleccionado.rol}`
+    );
+
+    if (!confirmar) {
+      this.notificacionService.mostrarInfo('Cambios cancelados');
+      return;
+    }
+
+    this.guardando = true;
+    try {
+      await this.usuariosService.actualizarUsuario(this.usuarioSeleccionado);
+      this.notificacionService.mostrarExito(
+        `Usuario ${this.usuarioSeleccionado.nombre} actualizado correctamente`
+      );
+      this.usuarioSeleccionado = null;
+      this.cargarUsuarios();
+    } catch (error) {
+      console.error('Error al actualizar usuario:', error);
+      this.notificacionService.mostrarError(
+        'Error al guardar los cambios. Por favor intenta nuevamente.'
+      );
+    } finally {
+      this.guardando = false;
     }
   }
 

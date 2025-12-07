@@ -130,6 +130,17 @@
                                 <span class="label">Respuesta del Programador:</span>
                                 <span class="value mensaje-respuesta">{{ solicitud.mensajeRespuesta }}</span>
                             </div>
+                            <div class="detalle-item" *ngIf="solicitud.motivoCancelacion">
+                                <span class="label">Motivo de Cancelación:</span>
+                                <span class="value mensaje-cancelacion">{{ solicitud.motivoCancelacion }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Botón de cancelar -->
+                        <div class="solicitud-footer" *ngIf="puedeCancelar(solicitud)">
+                            <button (click)="cancelarAsesoria(solicitud)" class="cancelar-btn">
+                                Cancelar Asesoría
+                            </button>
                         </div>
                     </div>
                 </div>

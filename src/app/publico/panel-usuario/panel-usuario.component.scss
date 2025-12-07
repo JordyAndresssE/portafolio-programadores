@@ -451,6 +451,12 @@
                 color: #ff4444;
                 border: 1px solid rgba(255, 68, 68, 0.2);
             }
+
+            &.estado-cancelada {
+                background: rgba(136, 136, 136, 0.1);
+                color: #888;
+                border: 1px solid rgba(136, 136, 136, 0.2);
+            }
         }
     }
 
@@ -484,6 +490,48 @@
                     border-left: 4px solid var(--primary-color);
                     color: #ffcccc;
                 }
+
+                &.mensaje-cancelacion {
+                    background: rgba(136, 136, 136, 0.1);
+                    padding: 1.5rem;
+                    border-radius: 12px;
+                    border-left: 4px solid #888;
+                    color: #ccc;
+                }
+            }
+        }
+    }
+
+    .solicitud-footer {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: flex-end;
+
+        .cancelar-btn {
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 68, 68, 0.2);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            &:hover {
+                background: #ff4444;
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+            }
+
+            &:active {
+                transform: translateY(0);
             }
         }
     }
