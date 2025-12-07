@@ -46,8 +46,27 @@
 
             <div class="availability-info" *ngIf="programador.disponibilidad">
                 <p><strong>Horario de Atención:</strong></p>
-                <p>Días: {{ programador.disponibilidad.dias.join(', ') }}</p>
-                <p>Horas: {{ programador.disponibilidad.horaInicio }} - {{ programador.disponibilidad.horaFin }}</p>
+
+                <!-- Sistema nuevo: Horarios personalizados por día -->
+                <div *ngIf="programador.disponibilidad.horariosPorDia" class="horarios-personalizados">
+                    <ng-container
+                        *ngFor="let dia of ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']">
+                        <div class="dia-horario" *ngIf="programador.disponibilidad.horariosPorDia[dia]?.activo">
+                            <span class="dia">{{ dia }}:</span>
+                            <span class="horario">
+                                {{ programador.disponibilidad.horariosPorDia[dia].horaInicio }} -
+                                {{ programador.disponibilidad.horariosPorDia[dia].horaFin }}
+                            </span>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <!-- Sistema antiguo: Horario general (compatibilidad) -->
+                <div
+                    *ngIf="!programador.disponibilidad.horariosPorDia && programador.disponibilidad.dias && programador.disponibilidad.dias.length > 0">
+                    <p>Días: {{ programador.disponibilidad.dias.join(', ') }}</p>
+                    <p>Horas: {{ programador.disponibilidad.horaInicio }} - {{ programador.disponibilidad.horaFin }}</p>
+                </div>
             </div>
 
             <div class="request-form">

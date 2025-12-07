@@ -68,18 +68,36 @@ export class PerfilPublicoComponent implements OnInit {
       const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
       const diaSolicitado = diasSemana[fecha.getDay()];
 
-      if (!this.programador.disponibilidad.dias.includes(diaSolicitado)) {
-        alert(`El programador no está disponible los ${diaSolicitado}. Días disponibles: ${this.programador.disponibilidad.dias.join(', ')}.`);
-        return;
+      // Verificar si usa el nuevo sistema de horarios personalizados
+      if (this.programador.disponibilidad.horariosPorDia) {
+        const horarioDia = this.programador.disponibilidad.horariosPorDia[diaSolicitado];
+
+        if (!horarioDia || !horarioDia.activo) {
+          alert(`El programador no está disponible los ${diaSolicitado}.`);
+          return;
+        }
+
+        const horaSolicitada = this.solicitud.horaAsesoria;
+        if (horaSolicitada < horarioDia.horaInicio || horaSolicitada > horarioDia.horaFin) {
+          alert(`La hora solicitada está fuera del horario de atención para ${diaSolicitado} (${horarioDia.horaInicio} - ${horarioDia.horaFin}).`);
+          return;
+        }
       }
+      // Sistema antiguo (compatibilidad)
+      else if (this.programador.disponibilidad.dias && this.programador.disponibilidad.dias.length > 0) {
+        if (!this.programador.disponibilidad.dias.includes(diaSolicitado)) {
+          alert(`El programador no está disponible los ${diaSolicitado}. Días disponibles: ${this.programador.disponibilidad.dias.join(', ')}.`);
+          return;
+        }
 
-      const horaInicio = this.programador.disponibilidad.horaInicio;
-      const horaFin = this.programador.disponibilidad.horaFin;
-      const horaSolicitada = this.solicitud.horaAsesoria;
+        const horaInicio = this.programador.disponibilidad.horaInicio;
+        const horaFin = this.programador.disponibilidad.horaFin;
+        const horaSolicitada = this.solicitud.horaAsesoria;
 
-      if (horaSolicitada < horaInicio || horaSolicitada > horaFin) {
-        alert(`La hora solicitada está fuera del horario de atención (${horaInicio} - ${horaFin}).`);
-        return;
+        if (horaInicio && horaFin && (horaSolicitada < horaInicio || horaSolicitada > horaFin)) {
+          alert(`La hora solicitada está fuera del horario de atención (${horaInicio} - ${horaFin}).`);
+          return;
+        }
       }
     }
 

@@ -21,6 +21,8 @@ export class AdminDashboardComponent implements OnInit {
   filtro = '';
   guardando = false;
 
+  diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
   private usuariosService = inject(UsuariosServicio);
   private authService = inject(AutenticacionServicio);
   private notificacionService = inject(NotificacionServicio);
@@ -60,19 +62,69 @@ export class AdminDashboardComponent implements OnInit {
     }
     if (!this.usuarioSeleccionado.disponibilidad) {
       this.usuarioSeleccionado.disponibilidad = {
-        dias: [],
-        horaInicio: '09:00',
-        horaFin: '18:00'
+        horariosPorDia: this.inicializarHorariosPorDia()
       };
+    } else if (!this.usuarioSeleccionado.disponibilidad.horariosPorDia) {
+      // Migrar del sistema antiguo al nuevo
+      this.usuarioSeleccionado.disponibilidad.horariosPorDia = this.inicializarHorariosPorDia();
     }
   }
 
-  toggleDia(dia: string) {
-    if (!this.usuarioSeleccionado?.disponibilidad) return;
+  // Inicializar estructura de horarios por día
+  inicializarHorariosPorDia() {
+    const horarios: any = {};
+    this.diasSemana.forEach(dia => {
+      horarios[dia] = {
+        activo: false,
+        horaInicio: '09:00',
+        horaFin: '18:00'
+      };
+    });
+    return horarios;
+  }
 
+  // Verificar si un día está activo
+  esDiaActivo(dia: string): boolean {
+    return this.usuarioSeleccionado?.disponibilidad?.horariosPorDia?.[dia]?.activo || false;
+  }
+
+  // Toggle día personalizado
+  toggleDiaPersonalizado(dia: string) {
+    if (!this.usuarioSeleccionado?.disponibilidad?.horariosPorDia) return;
+
+    const horario = this.usuarioSeleccionado.disponibilidad.horariosPorDia[dia];
+    if (horario) {
+      horario.activo = !horario.activo;
+    }
+  }
+
+  // Obtener hora de inicio de un día
+  getHoraInicio(dia: string): string {
+    return this.usuarioSeleccionado?.disponibilidad?.horariosPorDia?.[dia]?.horaInicio || '09:00';
+  }
+
+  // Obtener hora de fin de un día
+  getHoraFin(dia: string): string {
+    return this.usuarioSeleccionado?.disponibilidad?.horariosPorDia?.[dia]?.horaFin || '18:00';
+  }
+
+  // Establecer hora de inicio
+  setHoraInicio(dia: string, event: any) {
+    if (!this.usuarioSeleccionado?.disponibilidad?.horariosPorDia?.[dia]) return;
+    this.usuarioSeleccionado.disponibilidad.horariosPorDia[dia].horaInicio = event.target.value;
+  }
+
+  // Establecer hora de fin
+  setHoraFin(dia: string, event: any) {
+    if (!this.usuarioSeleccionado?.disponibilidad?.horariosPorDia?.[dia]) return;
+    this.usuarioSeleccionado.disponibilidad.horariosPorDia[dia].horaFin = event.target.value;
+  }
+
+  // Métodos antiguos - mantener por compatibilidad pero ya no se usan
+  toggleDia(dia: string) {
+    if (!this.usuarioSeleccionado?.disponibilidad?.dias) return;
     const dias = this.usuarioSeleccionado.disponibilidad.dias;
     const index = dias.indexOf(dia);
-
     if (index >= 0) {
       dias.splice(index, 1);
     } else {
@@ -81,7 +133,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   esDiaSeleccionado(dia: string): boolean {
-    return this.usuarioSeleccionado?.disponibilidad?.dias.includes(dia) || false;
+    return this.usuarioSeleccionado?.disponibilidad?.dias?.includes(dia) || false;
   }
 
   actualizarTecnologias(valor: string) {

@@ -176,21 +176,34 @@
           </div>
 
           <div class="form-group" *ngIf="usuarioSeleccionado.disponibilidad">
-            <label>Días disponibles</label>
-            <div class="days-selector">
-              <button *ngFor="let d of ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo']"
-                class="day-chip" [class.selected]="esDiaSeleccionado(d)" (click)="toggleDia(d)">
-                {{ d }}
-              </button>
-            </div>
-          </div>
+            <label>Disponibilidad Personalizada por Día</label>
+            <p class="help-text">Configura horarios específicos para cada día de la semana</p>
 
-          <div class="form-group" *ngIf="usuarioSeleccionado.disponibilidad">
-            <label>Horario</label>
-            <div class="time-range">
-              <input type="time" [(ngModel)]="usuarioSeleccionado.disponibilidad.horaInicio">
-              <span>a</span>
-              <input type="time" [(ngModel)]="usuarioSeleccionado.disponibilidad.horaFin">
+            <div class="disponibilidad-personalizada">
+              <div *ngFor="let dia of diasSemana" class="dia-config">
+                <div class="dia-header">
+                  <label class="checkbox-container">
+                    <input type="checkbox" [checked]="esDiaActivo(dia)" (change)="toggleDiaPersonalizado(dia)">
+                    <span class="dia-nombre">{{ dia }}</span>
+                  </label>
+                </div>
+
+                <div class="dia-horarios" *ngIf="esDiaActivo(dia)">
+                  <div class="horario-inputs">
+                    <div class="input-group">
+                      <label>Desde</label>
+                      <input type="time" [value]="getHoraInicio(dia)" (change)="setHoraInicio(dia, $event)"
+                        class="time-input">
+                    </div>
+                    <span class="separator">→</span>
+                    <div class="input-group">
+                      <label>Hasta</label>
+                      <input type="time" [value]="getHoraFin(dia)" (change)="setHoraFin(dia, $event)"
+                        class="time-input">
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
