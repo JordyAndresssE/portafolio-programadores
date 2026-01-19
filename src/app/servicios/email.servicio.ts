@@ -7,7 +7,7 @@ import emailjs from '@emailjs/browser';
 export class EmailServicio {
     // Credenciales de EmailJS
     private serviceID = 'service_ezyc52o';
-    private templateID = 'template_hkv2dry'; // Auto-Reply template
+    private templateID = 'template_hkv2dry'; // Auto-Reply plantilla
     private publicKey = 'gtJmEyPPBtyy3sUBw';
 
     constructor() {
@@ -41,8 +41,6 @@ export class EmailServicio {
             console.log('Correo enviado con éxito!', response.status, response.text);
         } catch (error) {
             console.error('Error al enviar el correo:', error);
-            // No lanzamos el error para no interrumpir el flujo del usuario si falla el correo
-            // pero podrías querer manejarlo diferente.
         }
     }
 }

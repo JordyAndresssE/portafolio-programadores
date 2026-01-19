@@ -2,9 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AutenticacionServicio } from '../servicios/autenticacion.servicio';
-import { ProyectosServicio } from '../servicios/proyectos.servicio';
-import { UsuariosServicio } from '../servicios/usuarios.servicio';
-import { AsesoriasServicio } from '../servicios/asesorias.servicio';
+import { ProyectosBackendServicio } from '../servicios/proyectos-backend.servicio';
+import { UsuariosBackendServicio } from '../servicios/usuarios-backend.servicio';
+import { AsesoriasBackendServicio } from '../servicios/asesorias-backend.servicio';
 import { Proyecto } from '../modelos/proyecto.modelo';
 import { Usuario } from '../modelos/usuario.modelo';
 import { Asesoria } from '../modelos/asesoria.modelo';
@@ -45,9 +45,9 @@ export class PanelProgramadorComponent implements OnInit {
   };
 
   private authService = inject(AutenticacionServicio);
-  private proyectosService = inject(ProyectosServicio);
-  private usuariosService = inject(UsuariosServicio);
-  private asesoriasService = inject(AsesoriasServicio);
+  private proyectosBackend = inject(ProyectosBackendServicio);
+  private usuariosBackend = inject(UsuariosBackendServicio);
+  private asesoriasBackend = inject(AsesoriasBackendServicio);
 
   ngOnInit() {
     this.authService.usuario$.subscribe(u => {
@@ -67,8 +67,10 @@ export class PanelProgramadorComponent implements OnInit {
   }
 
   cargarProyectos() {
+    if (!this.usuario?.uid) return;
+
     this.cargandoProyectos = true;
-    this.proyectosService.obtenerMisProyectos().subscribe({
+    this.proyectosBackend.obtenerProyectosPorProgramador(this.usuario.uid).subscribe({
       next: (p) => {
         this.proyectos = p;
         this.cargandoProyectos = false;
@@ -83,7 +85,7 @@ export class PanelProgramadorComponent implements OnInit {
   cargarAsesorias() {
     if (this.usuario?.uid) {
       this.cargandoAsesorias = true;
-      this.asesoriasService.obtenerAsesoriasPorProgramador(this.usuario.uid).subscribe({
+      this.asesoriasBackend.obtenerAsesoriasPorProgramador(this.usuario.uid).subscribe({
         next: (a) => {
           this.asesorias = a;
           this.cargandoAsesorias = false;
@@ -113,8 +115,12 @@ export class PanelProgramadorComponent implements OnInit {
     const mensaje = prompt(`Mensaje opcional para ${estado === 'aprobada' ? 'aprobar' : 'rechazar'} la solicitud:`);
     if (mensaje !== null) {
       try {
-        await this.asesoriasService.actualizarEstado(asesoria.id!, estado, mensaje);
-        this.cargarAsesorias(); // Recargar lista
+        if (estado === 'aprobada') {
+          await this.asesoriasBackend.aprobarAsesoria(asesoria.id!, mensaje).toPromise();
+        } else {
+          await this.asesoriasBackend.rechazarAsesoria(asesoria.id!, mensaje).toPromise();
+        }
+        this.cargarAsesorias();
         alert(`Solicitud ${estado} correctamente.`);
       } catch (error) {
         console.error('Error al responder asesoría:', error);
@@ -125,9 +131,9 @@ export class PanelProgramadorComponent implements OnInit {
 
   // --- Lógica de Perfil ---
   async guardarPerfil() {
-    if (this.perfilForm) {
+    if (this.perfilForm && this.perfilForm.uid) {
       try {
-        await this.usuariosService.actualizarUsuario(this.perfilForm);
+        await this.usuariosBackend.actualizarUsuario(this.perfilForm.uid, this.perfilForm).toPromise();
         alert('Perfil actualizado correctamente');
       } catch (error) {
         console.error('Error al actualizar perfil:', error);
@@ -172,11 +178,13 @@ export class PanelProgramadorComponent implements OnInit {
 
       if (this.proyectoEditando && this.proyectoEditando.id) {
         // Actualizar
-        await this.proyectosService.actualizarProyecto({ ...datosProyecto, id: this.proyectoEditando.id });
+        await this.proyectosBackend.actualizarProyecto(this.proyectoEditando.id, datosProyecto).toPromise();
       } else {
-        // Crear
-        await this.proyectosService.crearProyecto(datosProyecto);
+        // Crear - generar ID único
+        const nuevoId = 'PRO' + Date.now();
+        await this.proyectosBackend.crearProyecto({ ...datosProyecto, id: nuevoId }).toPromise();
       }
+      this.cargarProyectos();
       this.cerrarModalProyecto();
     } catch (error) {
       console.error('Error al guardar proyecto:', error);
@@ -187,7 +195,8 @@ export class PanelProgramadorComponent implements OnInit {
   async eliminarProyecto(id: string) {
     if (confirm('¿Estás seguro de eliminar este proyecto?')) {
       try {
-        await this.proyectosService.eliminarProyecto(id);
+        await this.proyectosBackend.eliminarProyecto(id).toPromise();
+        this.cargarProyectos();
       } catch (error) {
         console.error('Error al eliminar:', error);
       }

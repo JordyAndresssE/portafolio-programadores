@@ -2,10 +2,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { UsuariosServicio } from '../../servicios/usuarios.servicio';
-import { ProyectosServicio } from '../../servicios/proyectos.servicio';
+import { UsuariosBackendServicio } from '../../servicios/usuarios-backend.servicio';
+import { ProyectosBackendServicio } from '../../servicios/proyectos-backend.servicio';
 import { AutenticacionServicio } from '../../servicios/autenticacion.servicio';
-import { AsesoriasServicio } from '../../servicios/asesorias.servicio';
+import { AsesoriasBackendServicio } from '../../servicios/asesorias-backend.servicio';
 import { EmailServicio } from '../../servicios/email.servicio';
 import { Usuario } from '../../modelos/usuario.modelo';
 import { Proyecto } from '../../modelos/proyecto.modelo';
@@ -30,10 +30,10 @@ export class PerfilPublicoComponent implements OnInit {
   };
 
   private route = inject(ActivatedRoute);
-  private usuariosService = inject(UsuariosServicio);
-  private proyectosService = inject(ProyectosServicio);
+  private usuariosBackend = inject(UsuariosBackendServicio);
+  private proyectosBackend = inject(ProyectosBackendServicio);
   private authService = inject(AutenticacionServicio);
-  private asesoriasService = inject(AsesoriasServicio);
+  private asesoriasBackend = inject(AsesoriasBackendServicio);
   private emailService = inject(EmailServicio);
 
   ngOnInit() {
@@ -47,11 +47,17 @@ export class PerfilPublicoComponent implements OnInit {
   }
 
   cargarProgramador(id: string) {
-    this.usuariosService.obtenerUsuarioPorId(id).subscribe(u => this.programador = u || null);
+    this.usuariosBackend.obtenerUsuarioPorId(id).subscribe({
+      next: (u) => this.programador = u || null,
+      error: (err) => console.error('Error al cargar programador:', err)
+    });
   }
 
   cargarProyectos(id: string) {
-    this.proyectosService.obtenerProyectosPorProgramador(id).subscribe(p => this.proyectos = p);
+    this.proyectosBackend.obtenerProyectosPorProgramador(id).subscribe({
+      next: (p) => this.proyectos = p,
+      error: (err) => console.error('Error al cargar proyectos:', err)
+    });
   }
 
   async enviarSolicitud() {
@@ -114,7 +120,7 @@ export class PerfilPublicoComponent implements OnInit {
         fechaSolicitud: new Date()
       };
 
-      await this.asesoriasService.crearSolicitud(nuevaAsesoria);
+      await this.asesoriasBackend.crearAsesoria(nuevaAsesoria).toPromise();
 
       // Enviar notificación por correo
       await this.emailService.enviarNotificacionAsesoria(

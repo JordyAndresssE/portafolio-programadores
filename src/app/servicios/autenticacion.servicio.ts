@@ -24,7 +24,6 @@ export class AutenticacionServicio {
       switchMap((user: FirebaseUser | null) => {
         if (user) {
           const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
-          // Usamos onSnapshot manual para evitar errores de contexto de inyección con docData
           return new Observable<Usuario>(observer => {
             const unsubscribe = onSnapshot(userDocRef, (snapshot) => {
               if (snapshot.exists()) {

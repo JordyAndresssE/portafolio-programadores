@@ -1,5 +1,6 @@
 export const environment = {
     production: false,
+    apiUrl: 'http://localhost:8080/backproyecto/api', // URL de tu backend Jakarta
     firebase: {
         apiKey: "TU_API_KEY_AQUI",
         authDomain: "tu-proyecto.firebaseapp.com",

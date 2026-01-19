@@ -2,8 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AutenticacionServicio } from '../../servicios/autenticacion.servicio';
-import { UsuariosServicio } from '../../servicios/usuarios.servicio';
-import { AsesoriasServicio } from '../../servicios/asesorias.servicio';
+import { UsuariosBackendServicio } from '../../servicios/usuarios-backend.servicio';
+import { AsesoriasBackendServicio } from '../../servicios/asesorias-backend.servicio';
 import { NotificacionServicio } from '../../servicios/notificacion.servicio';
 import { Usuario } from '../../modelos/usuario.modelo';
 import { Asesoria } from '../../modelos/asesoria.modelo';
@@ -18,8 +18,8 @@ import { Observable } from 'rxjs';
 })
 export class PanelUsuarioComponent implements OnInit {
     private authService = inject(AutenticacionServicio);
-    private usuariosService = inject(UsuariosServicio);
-    private asesoriasService = inject(AsesoriasServicio);
+    private usuariosBackend = inject(UsuariosBackendServicio);
+    private asesoriasBackend = inject(AsesoriasBackendServicio);
     private notificacionService = inject(NotificacionServicio);
     private router = inject(Router);
 
@@ -41,10 +41,18 @@ export class PanelUsuarioComponent implements OnInit {
     async cargarProgramadores() {
         this.cargando = true;
         try {
-            this.programadores = await this.usuariosService.obtenerProgramadores();
+            this.usuariosBackend.obtenerProgramadores().subscribe({
+                next: (programadores) => {
+                    this.programadores = programadores;
+                    this.cargando = false;
+                },
+                error: (error) => {
+                    console.error('Error al cargar programadores:', error);
+                    this.cargando = false;
+                }
+            });
         } catch (error) {
             console.error('Error al cargar programadores:', error);
-        } finally {
             this.cargando = false;
         }
     }
@@ -52,7 +60,7 @@ export class PanelUsuarioComponent implements OnInit {
     async cargarSolicitudes() {
         const usuario = await this.authService.obtenerUsuarioActual();
         if (usuario?.uid) {
-            this.asesoriasService.obtenerAsesoriasPorUsuario(usuario.uid).subscribe({
+            this.asesoriasBackend.obtenerAsesoriasPorUsuario(usuario.uid).subscribe({
                 next: (solicitudes) => {
                     this.solicitudes = solicitudes;
                 },
@@ -72,17 +80,19 @@ export class PanelUsuarioComponent implements OnInit {
     }
 
     puedeCancelar(asesoria: Asesoria): boolean {
-        return this.asesoriasService.puedeCancelar(asesoria).puede;
+        // Validación básica - el backend también validará
+        if (asesoria.estado === 'rechazada' || asesoria.estado === 'cancelada') {
+            return false;
+        }
+        return true;
     }
 
     async cancelarAsesoria(asesoria: Asesoria) {
         if (!asesoria.id) return;
 
         // Validar si puede cancelar
-        const validacion = this.asesoriasService.puedeCancelar(asesoria);
-
-        if (!validacion.puede) {
-            this.notificacionService.mostrarAdvertencia(validacion.razon || 'No puedes cancelar esta asesoría');
+        if (!this.puedeCancelar(asesoria)) {
+            this.notificacionService.mostrarAdvertencia('No puedes cancelar esta asesoría');
             return;
         }
 
@@ -130,7 +140,7 @@ export class PanelUsuarioComponent implements OnInit {
         }
 
         try {
-            await this.asesoriasService.cancelarAsesoria(asesoria.id, motivoCancelacion);
+            await this.asesoriasBackend.cancelarAsesoria(asesoria.id, motivoCancelacion).toPromise();
             this.notificacionService.mostrarExito('Asesoría cancelada correctamente');
             await this.cargarSolicitudes(); // Recargar lista
         } catch (error) {

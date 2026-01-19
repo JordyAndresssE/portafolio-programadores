@@ -16,9 +16,9 @@ export interface Usuario {
   };
   disponibilidad?: {
     // Opción 1: Horario general para todos los días
-    dias?: string[]; // Ej: ['Lunes', 'Martes'] - DEPRECATED, mantener por compatibilidad
-    horaInicio?: string; // Ej: '09:00' - DEPRECATED
-    horaFin?: string; // Ej: '17:00' - DEPRECATED
+    dias?: string[]; // Ej: ['Lunes', 'Martes'] 
+    horaInicio?: string; // Ej: '09:00' 
+    horaFin?: string; // Ej: '17:00'
 
     // Opción 2: Horarios personalizados por día (NUEVO)
     horariosPorDia?: {
@@ -28,11 +28,13 @@ export interface Usuario {
         horaFin: string;
       };
     };
+
     // Ejemplo:
     // {
     //   'Lunes': { activo: true, horaInicio: '09:00', horaFin: '12:00' },
     //   'Martes': { activo: true, horaInicio: '14:00', horaFin: '18:00' },
     //   'Miércoles': { activo: false, horaInicio: '', horaFin: '' }
     // }
+
   };
 }

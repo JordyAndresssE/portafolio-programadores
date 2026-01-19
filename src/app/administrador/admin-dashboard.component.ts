@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UsuariosServicio } from '../servicios/usuarios.servicio';
+import { UsuariosBackendServicio } from '../servicios/usuarios-backend.servicio';
 import { Usuario } from '../modelos/usuario.modelo';
 import { FormsModule } from '@angular/forms';
 import { AutenticacionServicio } from '../servicios/autenticacion.servicio';
@@ -23,7 +23,7 @@ export class AdminDashboardComponent implements OnInit {
 
   diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-  private usuariosService = inject(UsuariosServicio);
+  private usuariosBackend = inject(UsuariosBackendServicio);
   private authService = inject(AutenticacionServicio);
   private notificacionService = inject(NotificacionServicio);
 
@@ -32,9 +32,15 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   cargarUsuarios() {
-    this.usuariosService.obtenerTodosLosUsuarios().subscribe(users => {
-      this.usuarios = users;
-      this.usuariosFiltrados = users;
+    this.usuariosBackend.obtenerTodosLosUsuarios().subscribe({
+      next: (users) => {
+        this.usuarios = users;
+        this.usuariosFiltrados = users;
+      },
+      error: (error) => {
+        console.error('Error al cargar usuarios:', error);
+        this.notificacionService.mostrarError('Error al cargar usuarios');
+      }
     });
   }
 
@@ -146,7 +152,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   async guardarCambios() {
-    if (!this.usuarioSeleccionado) return;
+    if (!this.usuarioSeleccionado || !this.usuarioSeleccionado.uid) return;
 
     // Confirmación antes de guardar
     const confirmar = confirm(
@@ -161,7 +167,11 @@ export class AdminDashboardComponent implements OnInit {
 
     this.guardando = true;
     try {
-      await this.usuariosService.actualizarUsuario(this.usuarioSeleccionado);
+      await this.usuariosBackend.actualizarUsuario(
+        this.usuarioSeleccionado.uid,
+        this.usuarioSeleccionado
+      ).toPromise();
+
       this.notificacionService.mostrarExito(
         `Usuario ${this.usuarioSeleccionado.nombre} actualizado correctamente`
       );
