@@ -1,78 +1,93 @@
-import { Injectable, inject, NgZone, Injector, runInInjectionContext } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import { Auth, GoogleAuthProvider, signInWithPopup, signOut, authState, User as FirebaseUser } from '@angular/fire/auth';
-import { Firestore, doc, getDoc, setDoc, onSnapshot } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, of, BehaviorSubject } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
 import { Usuario } from '../modelos/usuario.modelo';
+import { UsuariosBackendServicio } from './usuarios-backend.servicio';
+import { convertirUsuario } from '../utils/convertidores';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AutenticacionServicio {
   private auth: Auth = inject(Auth);
-  private firestore: Firestore = inject(Firestore);
   private router: Router = inject(Router);
   private ngZone: NgZone = inject(NgZone);
-  private injector: Injector = inject(Injector);
+  private usuariosBackend = inject(UsuariosBackendServicio);
 
-  usuario$: Observable<Usuario | null>;
+  private usuarioSubject = new BehaviorSubject<Usuario | null>(null);
+  usuario$: Observable<Usuario | null> = this.usuarioSubject.asObservable();
+
   private usuarioPendiente: FirebaseUser | null = null;
 
   constructor() {
-    this.usuario$ = authState(this.auth).pipe(
-      switchMap((user: FirebaseUser | null) => {
-        if (user) {
-          const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
-          return new Observable<Usuario>(observer => {
-            const unsubscribe = onSnapshot(userDocRef, (snapshot) => {
-              if (snapshot.exists()) {
-                observer.next({ uid: snapshot.id, ...snapshot.data() } as Usuario);
-              } else {
-                // Si el documento no existe aún (puede pasar en el registro inicial)
-                observer.next({
-                  uid: user.uid,
-                  email: user.email || '',
-                  nombre: user.displayName || 'Usuario',
-                  fotoPerfil: user.photoURL || '',
-                  rol: 'usuario'
-                });
-              }
-            }, (error) => {
-              observer.error(error);
-            });
-            return () => unsubscribe();
-          });
-        } else {
-          return of(null);
+    // Escuchar cambios de autenticación de Firebase
+    authState(this.auth).subscribe(async (firebaseUser) => {
+      if (firebaseUser) {
+        // Usuario autenticado en Firebase, buscar en backend
+        await this.cargarUsuarioDesdeBackend(firebaseUser.uid);
+      } else {
+        // Usuario no autenticado
+        this.usuarioSubject.next(null);
+      }
+    });
+  }
+
+  private async cargarUsuarioDesdeBackend(uid: string): Promise<void> {
+    try {
+      this.usuariosBackend.obtenerUsuarioPorId(uid).subscribe({
+        next: (usuario) => {
+          if (usuario) {
+            // Convertir tecnologias usando helper
+            this.usuarioSubject.next(convertirUsuario(usuario));
+          } else {
+            this.usuarioSubject.next(null);
+          }
+        },
+        error: (error) => {
+          console.error('Error al cargar usuario desde backend:', error);
+          this.usuarioSubject.next(null);
         }
-      })
-    );
+      });
+    } catch (error) {
+      console.error('Error al cargar usuario:', error);
+      this.usuarioSubject.next(null);
+    }
   }
 
   async iniciarSesionGoogle(): Promise<boolean> {
     const provider = new GoogleAuthProvider();
     try {
       const credencial = await signInWithPopup(this.auth, provider);
-      const user = credencial.user;
+      const firebaseUser = credencial.user;
 
-      // Ejecutamos la lógica de base de datos dentro del contexto de inyección para evitar errores de AngularFire
-      return await runInInjectionContext(this.injector, async () => {
-        // Verificar si el usuario ya existe en Firestore
-        const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
-        const userDoc = await getDoc(userDocRef);
-
-        if (!userDoc.exists()) {
-          // Es un nuevo usuario, guardar temporalmente para asignar rol después
-          this.usuarioPendiente = user;
-          return true; // Es nuevo usuario
-        } else {
-          // Usuario existente, redirigir según su rol
-          const datosUsuario = userDoc.data() as Usuario;
-          console.log('Usuario existente autenticado:', datosUsuario);
-          this.redirigirSegunRol(datosUsuario);
-          return false; // No es nuevo usuario
-        }
+      // Verificar si el usuario existe en el backend
+      return new Promise((resolve) => {
+        this.usuariosBackend.obtenerUsuarioPorId(firebaseUser.uid).subscribe({
+          next: async (usuarioBackend) => {
+            if (!usuarioBackend) {
+              // Usuario nuevo - crear en backend
+              this.crearNuevoUsuario(firebaseUser, resolve);
+            } else {
+              // Usuario existente - redirigir según rol
+              console.log('✅ Usuario existente autenticado:', usuarioBackend);
+              this.usuarioSubject.next(convertirUsuario(usuarioBackend));
+              this.redirigirSegunRol(usuarioBackend);
+              resolve(false);
+            }
+          },
+          error: (error) => {
+            // Si es 404, significa que el usuario no existe - crearlo
+            if (error.status === 404) {
+              console.log('📝 Usuario no encontrado, creando nuevo usuario...');
+              this.crearNuevoUsuario(firebaseUser, resolve);
+            } else {
+              console.error('❌ Error al verificar usuario:', error);
+              resolve(false);
+            }
+          }
+        });
       });
 
     } catch (error) {
@@ -82,41 +97,46 @@ export class AutenticacionServicio {
   }
 
   async establecerRolYRedirigir(rol: 'programador' | 'usuario'): Promise<void> {
-    if (!this.usuarioPendiente) {
-      console.error('No hay usuario pendiente para establecer rol');
-      return;
-    }
-
-    const user = this.usuarioPendiente;
-
-    await runInInjectionContext(this.injector, async () => {
-      const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
-
-      const nuevoUsuario: Usuario = {
-        uid: user.uid,
-        email: user.email || '',
-        nombre: user.displayName || 'Usuario',
-        fotoPerfil: user.photoURL || '',
-        rol: rol
-      };
-
-      await setDoc(userDocRef, nuevoUsuario);
-      console.log('Nuevo usuario registrado con rol:', rol);
-
-      this.usuarioPendiente = null;
-      this.redirigirSegunRol(nuevoUsuario);
-    });
+    // Este método ya no es necesario porque creamos usuarios automáticamente
+    console.warn('establecerRolYRedirigir ya no se usa - usuarios se crean automáticamente');
   }
 
   async cerrarSesion() {
     await signOut(this.auth);
+    this.usuarioSubject.next(null);
     this.ngZone.run(() => {
       this.router.navigate(['/login']);
     });
   }
 
-  async obtenerUsuarioActual(): Promise<FirebaseUser | null> {
-    return this.auth.currentUser;
+  async obtenerUsuarioActual(): Promise<Usuario | null> {
+    return this.usuarioSubject.value;
+  }
+
+  private crearNuevoUsuario(firebaseUser: any, resolve: (value: boolean) => void) {
+    const nuevoUsuario: Usuario = {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email || '',
+      nombre: firebaseUser.displayName || 'Usuario',
+      fotoPerfil: firebaseUser.photoURL || '',
+      rol: 'usuario'
+    };
+
+    this.usuariosBackend.crearUsuario(nuevoUsuario).subscribe({
+      next: (usuarioCreado) => {
+        console.log('✅ Nuevo usuario creado en backend:', usuarioCreado);
+        this.usuarioSubject.next(nuevoUsuario);
+        this.redirigirSegunRol(nuevoUsuario);
+        resolve(true);
+      },
+      error: (error) => {
+        console.error('❌ Error al crear usuario en backend:', error);
+        // Aún así redirigir como usuario temporal
+        this.usuarioSubject.next(nuevoUsuario);
+        this.redirigirSegunRol(nuevoUsuario);
+        resolve(false);
+      }
+    });
   }
 
   private redirigirSegunRol(usuario: Usuario | null) {

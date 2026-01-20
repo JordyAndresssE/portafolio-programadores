@@ -8,6 +8,7 @@ import { NotificacionServicio } from '../../servicios/notificacion.servicio';
 import { Usuario } from '../../modelos/usuario.modelo';
 import { Asesoria } from '../../modelos/asesoria.modelo';
 import { Observable } from 'rxjs';
+import { convertirUsuario } from '../../utils/convertidores';
 
 @Component({
     selector: 'app-panel-usuario',
@@ -43,7 +44,8 @@ export class PanelUsuarioComponent implements OnInit {
         try {
             this.usuariosBackend.obtenerProgramadores().subscribe({
                 next: (programadores) => {
-                    this.programadores = programadores;
+                    // Convertir tecnologias de string a array
+                    this.programadores = programadores.map(p => convertirUsuario(p));
                     this.cargando = false;
                 },
                 error: (error) => {

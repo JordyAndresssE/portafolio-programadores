@@ -10,6 +10,7 @@ import { EmailServicio } from '../../servicios/email.servicio';
 import { Usuario } from '../../modelos/usuario.modelo';
 import { Proyecto } from '../../modelos/proyecto.modelo';
 import { Asesoria } from '../../modelos/asesoria.modelo';
+import { convertirUsuario, convertirProyecto } from '../../utils/convertidores';
 
 @Component({
   selector: 'app-perfil-publico',
@@ -48,14 +49,18 @@ export class PerfilPublicoComponent implements OnInit {
 
   cargarProgramador(id: string) {
     this.usuariosBackend.obtenerUsuarioPorId(id).subscribe({
-      next: (u) => this.programador = u || null,
+      next: (u) => {
+        this.programador = u ? convertirUsuario(u) : null;
+      },
       error: (err) => console.error('Error al cargar programador:', err)
     });
   }
 
   cargarProyectos(id: string) {
     this.proyectosBackend.obtenerProyectosPorProgramador(id).subscribe({
-      next: (p) => this.proyectos = p,
+      next: (proyectos) => {
+        this.proyectos = proyectos.map(p => convertirProyecto(p));
+      },
       error: (err) => console.error('Error al cargar proyectos:', err)
     });
   }

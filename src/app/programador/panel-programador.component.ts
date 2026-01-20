@@ -153,7 +153,9 @@ export class PanelProgramadorComponent implements OnInit {
   editarProyecto(proyecto: Proyecto) {
     this.proyectoEditando = proyecto;
     this.proyectoForm = { ...proyecto };
-    this.tecnologiasInput = proyecto.tecnologias.join(', ');
+    // Asegurar que tecnologias sea array antes de join
+    const techs = Array.isArray(proyecto.tecnologias) ? proyecto.tecnologias : [];
+    this.tecnologiasInput = techs.join(', ');
     this.mostrarModalProyecto = true;
   }
 

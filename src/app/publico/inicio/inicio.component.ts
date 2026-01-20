@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { UsuariosBackendServicio } from '../../servicios/usuarios-backend.servicio';
 import { Usuario } from '../../modelos/usuario.modelo';
+import { convertirUsuario } from '../../utils/convertidores';
 
 @Component({
   selector: 'app-inicio',
@@ -32,10 +33,11 @@ export class InicioComponent implements OnInit {
 
     this.usuariosBackend.obtenerProgramadores().subscribe({
       next: (programadores) => {
-        this.programadores = programadores;
-        this.programadoresFiltrados = programadores;
+        // Convertir tecnologias de string a array usando helper
+        this.programadores = programadores.map(prog => convertirUsuario(prog));
+        this.programadoresFiltrados = this.programadores;
         this.cargando = false;
-        console.log('✅ Programadores cargados desde backend:', programadores);
+        console.log('✅ Programadores cargados desde backend:', this.programadores);
       },
       error: (err) => {
         console.error('❌ Error al cargar programadores:', err);
@@ -55,7 +57,11 @@ export class InicioComponent implements OnInit {
     this.programadoresFiltrados = this.programadores.filter(dev => {
       const nombre = dev.nombre?.toLowerCase() || '';
       const especialidad = dev.especialidad?.toLowerCase() || '';
-      const tecnologias = dev.tecnologias?.join(' ').toLowerCase() || '';
+
+      // Manejar tecnologias como array
+      const tecnologias = Array.isArray(dev.tecnologias)
+        ? dev.tecnologias.join(' ').toLowerCase()
+        : '';
 
       return nombre.includes(termino) ||
         especialidad.includes(termino) ||

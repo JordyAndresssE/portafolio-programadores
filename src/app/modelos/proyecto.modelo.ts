@@ -5,7 +5,7 @@ export interface Proyecto {
   descripcion: string;
   tipo: 'academico' | 'laboral';
   participacion: 'Frontend' | 'Backend' | 'Base de Datos' | 'Fullstack';
-  tecnologias: string[]; // Array de strings, ej: ['Angular', 'Firebase']
+  tecnologias: string[];
   repoUrl?: string;
   demoUrl?: string;
   imagenUrl?: string;
