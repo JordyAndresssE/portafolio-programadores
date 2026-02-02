@@ -7,6 +7,7 @@ import { AutenticacionServicio } from '../servicios/autenticacion.servicio';
 import { NotificacionServicio } from '../servicios/notificacion.servicio';
 import { FilterPipe } from '../compartido/filter.pipe';
 import { ReportesFastAPIServicio } from '../servicios/reportes-fastapi.servicio';
+import { convertirUsuarioABackend } from '../utils/usuario-dto.converter';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -169,9 +170,14 @@ export class AdminDashboardComponent implements OnInit {
 
     this.guardando = true;
     try {
+      // ✅ CONVERTIR USUARIO AL FORMATO DEL BACKEND
+      const usuarioDTO = convertirUsuarioABackend(this.usuarioSeleccionado);
+      
+      console.log('📤 Enviando usuario al backend:', usuarioDTO);
+      
       await this.usuariosBackend.actualizarUsuario(
         this.usuarioSeleccionado.uid,
-        this.usuarioSeleccionado
+        usuarioDTO
       ).toPromise();
 
       this.notificacionService.mostrarExito(

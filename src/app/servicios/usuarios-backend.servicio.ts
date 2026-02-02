@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Usuario } from '../modelos/usuario.modelo';
 import { environment } from '../../environments/environment';
+import { convertirUsuarioDesdeBackend } from '../utils/usuario-dto.converter';
 
 @Injectable({
     providedIn: 'root'
@@ -15,21 +17,27 @@ export class UsuariosBackendServicio {
      * Obtener todos los usuarios
      */
     obtenerTodosLosUsuarios(): Observable<Usuario[]> {
-        return this.http.get<Usuario[]>(this.apiUrl);
+        return this.http.get<any[]>(this.apiUrl).pipe(
+            map(usuarios => usuarios.map(u => convertirUsuarioDesdeBackend(u)))
+        );
     }
 
     /**
      * Obtener solo programadores
      */
     obtenerProgramadores(): Observable<Usuario[]> {
-        return this.http.get<Usuario[]>(`${this.apiUrl}/programadores`);
+        return this.http.get<any[]>(`${this.apiUrl}/programadores`).pipe(
+            map(usuarios => usuarios.map(u => convertirUsuarioDesdeBackend(u)))
+        );
     }
 
     /**
      * Obtener un usuario por su UID
      */
     obtenerUsuarioPorId(uid: string): Observable<Usuario> {
-        return this.http.get<Usuario>(`${this.apiUrl}/${uid}`);
+        return this.http.get<any>(`${this.apiUrl}/${uid}`).pipe(
+            map(u => convertirUsuarioDesdeBackend(u))
+        );
     }
 
     /**
@@ -40,10 +48,12 @@ export class UsuariosBackendServicio {
     }
 
     /**
-     * Actualizar un usuario existente
+     * Actualizar un usuario existente (recibe DTO ya convertido)
      */
-    actualizarUsuario(uid: string, usuario: Usuario): Observable<Usuario> {
-        return this.http.put<Usuario>(`${this.apiUrl}/${uid}`, usuario);
+    actualizarUsuario(uid: string, usuarioDTO: any): Observable<Usuario> {
+        return this.http.put<any>(`${this.apiUrl}/${uid}`, usuarioDTO).pipe(
+            map(u => convertirUsuarioDesdeBackend(u))
+        );
     }
 
     /**

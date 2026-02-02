@@ -10,6 +10,7 @@ import { Proyecto } from '../modelos/proyecto.modelo';
 import { Usuario } from '../modelos/usuario.modelo';
 import { Asesoria } from '../modelos/asesoria.modelo';
 import { convertirProyecto } from '../utils/convertidores';
+import { convertirUsuarioABackend } from '../utils/usuario-dto.converter';
 
 @Component({
   selector: 'app-panel-programador',
@@ -159,23 +160,12 @@ export class PanelProgramadorComponent implements OnInit {
   async guardarPerfil() {
     if (this.perfilForm && this.perfilForm.uid) {
       try {
-        // Transformar datos para que coincidan con el backend
-        const datosBackend: any = {
-          ...this.perfilForm,
-          // Convertir redesSociales a campos individuales
-          github: this.perfilForm.redesSociales?.github || null,
-          linkedin: this.perfilForm.redesSociales?.linkedin || null,
-          twitter: this.perfilForm.redesSociales?.twitter || null,
-          // Convertir array de tecnologías a String separado por comas
-          tecnologias: Array.isArray(this.perfilForm.tecnologias) 
-            ? this.perfilForm.tecnologias.join(',') 
-            : this.perfilForm.tecnologias || null
-        };
+        // ✅ Usar convertidor DTO para transformar datos al formato del backend
+        const usuarioDTO = convertirUsuarioABackend(this.perfilForm);
         
-        // Eliminar el campo redesSociales del objeto que se envía
-        delete datosBackend.redesSociales;
+        console.log('📤 Enviando perfil al backend:', usuarioDTO);
         
-        await this.usuariosBackend.actualizarUsuario(this.perfilForm.uid, datosBackend).toPromise();
+        await this.usuariosBackend.actualizarUsuario(this.perfilForm.uid, usuarioDTO).toPromise();
         alert('Perfil actualizado correctamente');
       } catch (error) {
         console.error('Error al actualizar perfil:', error);
