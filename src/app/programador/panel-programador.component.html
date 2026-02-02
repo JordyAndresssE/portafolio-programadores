@@ -124,8 +124,8 @@
                 <div *ngFor="let asesoria of asesorias" class="advisory-card"
                     [class.pending]="asesoria.estado === 'pendiente'">
                     <div class="advisory-header">
-                        <span class="status-badge" [ngClass]="asesoria.estado">{{ asesoria.estado | titlecase }}</span>
-                        <span class="date">{{ convertirTimestamp(asesoria.fechaSolicitud) | date:'mediumDate' }}</span>
+                        <span class="status-badge" [ngClass]="asesoria.estado">{{ obtenerEstadoFormateado(asesoria.estado) }}</span>
+                        <span class="date">{{ obtenerFechaFormateada(asesoria.fechaSolicitud) }}</span>
                     </div>
 
                     <div class="advisory-body">
@@ -143,6 +143,10 @@
 
                     <div class="advisory-response" *ngIf="asesoria.estado !== 'pendiente'">
                         <p><strong>Respuesta:</strong> {{ asesoria.mensajeRespuesta || 'Sin mensaje adicional' }}</p>
+                    </div>
+
+                    <div class="advisory-cancellation" *ngIf="asesoria.estado === 'cancelada' && asesoria.motivoCancelacion">
+                        <p><strong>Motivo de Cancelación:</strong> {{ asesoria.motivoCancelacion }}</p>
                     </div>
                 </div>
             </div>

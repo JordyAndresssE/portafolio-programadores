@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Asesoria } from '../modelos/asesoria.modelo';
 import { environment } from '../../environments/environment';
@@ -64,21 +64,30 @@ export class AsesoriasBackendServicio {
      * Aprobar una asesoría
      */
     aprobarAsesoria(id: string, mensajeRespuesta: string): Observable<Asesoria> {
-        return this.http.put<Asesoria>(`${this.apiUrl}/${id}/aprobar`, mensajeRespuesta);
+        return this.http.put<Asesoria>(
+            `${this.apiUrl}/${id}/aprobar`, 
+            { mensajeRespuesta: mensajeRespuesta }
+        );
     }
 
     /**
      * Rechazar una asesoría
      */
     rechazarAsesoria(id: string, mensajeRespuesta: string): Observable<Asesoria> {
-        return this.http.put<Asesoria>(`${this.apiUrl}/${id}/rechazar`, mensajeRespuesta);
+        return this.http.put<Asesoria>(
+            `${this.apiUrl}/${id}/rechazar`, 
+            { mensajeRespuesta: mensajeRespuesta }
+        );
     }
 
     /**
      * Cancelar una asesoría
      */
     cancelarAsesoria(id: string, motivoCancelacion: string): Observable<Asesoria> {
-        return this.http.put<Asesoria>(`${this.apiUrl}/${id}/cancelar`, motivoCancelacion);
+        return this.http.put<Asesoria>(
+            `${this.apiUrl}/${id}/cancelar`, 
+            { motivoCancelacion: motivoCancelacion }
+        );
     }
 
     /**

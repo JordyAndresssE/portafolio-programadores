@@ -151,6 +151,65 @@ export class PanelUsuarioComponent implements OnInit {
         }
     }
 
+    // Helper para convertir Timestamp de forma segura
+    convertirTimestamp(timestamp: any): Date {
+        // Si ya es un Date válido
+        if (timestamp instanceof Date && !isNaN(timestamp.getTime())) {
+            return timestamp;
+        }
+        
+        // Si es un Timestamp de Firebase
+        if (timestamp && typeof timestamp.toDate === 'function') {
+            return timestamp.toDate();
+        }
+        
+        // Si es null o undefined, retornar fecha actual
+        if (!timestamp) {
+            return new Date();
+        }
+        
+        // Si es un número (milisegundos desde epoch)
+        if (typeof timestamp === 'number') {
+            return new Date(timestamp);
+        }
+        
+        // Si es un string, intentar parsearlo
+        if (typeof timestamp === 'string') {
+            // Remover [UTC] o cualquier zona horaria entre corchetes
+            const cleanedString = timestamp.replace(/\[.*?\]/g, '');
+            const parsed = new Date(cleanedString);
+            if (!isNaN(parsed.getTime())) {
+                return parsed;
+            }
+        }
+        
+        // Si es un array de Java LocalDateTime [year, month, day, hour, minute, second, nano]
+        if (Array.isArray(timestamp) && timestamp.length >= 3) {
+            const [year, month, day, hour = 0, minute = 0, second = 0] = timestamp;
+            return new Date(year, month - 1, day, hour, minute, second);
+        }
+        
+        console.error('❌ No se pudo convertir timestamp:', timestamp);
+        return new Date(); // Fallback
+    }
+
+    // Helper para obtener fecha formateada
+    obtenerFechaFormateada(fecha: any): string {
+        try {
+            const date = this.convertirTimestamp(fecha);
+            return date.toLocaleDateString('es-ES', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (error) {
+            console.error('Error al formatear fecha:', error);
+            return 'Fecha no disponible';
+        }
+    }
+
     obtenerEstadoClase(estado: string): string {
         switch (estado) {
             case 'aprobada':

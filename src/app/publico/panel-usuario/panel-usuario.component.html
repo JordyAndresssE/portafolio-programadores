@@ -105,7 +105,7 @@
                             <div class="solicitud-info">
                                 <h3>Asesoría Solicitada</h3>
                                 <p class="fecha-solicitud">
-                                    Solicitado el: {{ solicitud.fechaSolicitud.toDate() | date:'dd/MM/yyyy HH:mm' }}
+                                    Solicitado el: {{ obtenerFechaFormateada(solicitud.fechaSolicitud) }}
                                 </p>
                             </div>
                             <span [class]="'estado-badge ' + obtenerEstadoClase(solicitud.estado)">

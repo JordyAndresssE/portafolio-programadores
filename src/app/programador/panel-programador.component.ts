@@ -92,11 +92,16 @@ export class PanelProgramadorComponent implements OnInit {
       this.cargandoAsesorias = true;
       this.asesoriasBackend.obtenerAsesoriasPorProgramador(this.usuario.uid).subscribe({
         next: (a) => {
+          console.log('✅ Asesorías recibidas:', a);
+          console.log('Cantidad de asesorías:', a.length);
+          if (a.length > 0) {
+            console.log('Primera asesoría:', a[0]);
+          }
           this.asesorias = a;
           this.cargandoAsesorias = false;
         },
         error: (error) => {
-          console.error('Error al cargar asesorías:', error);
+          console.error('❌ Error al cargar asesorías:', error);
           this.cargandoAsesorias = false;
         }
       });
@@ -109,10 +114,65 @@ export class PanelProgramadorComponent implements OnInit {
 
   // Helper para convertir Timestamp de Firebase a Date
   convertirTimestamp(timestamp: any): Date {
-    if (timestamp && timestamp.toDate) {
+    // Si ya es un Date válido
+    if (timestamp instanceof Date && !isNaN(timestamp.getTime())) {
+      return timestamp;
+    }
+    
+    // Si es un Timestamp de Firebase
+    if (timestamp && typeof timestamp.toDate === 'function') {
       return timestamp.toDate();
     }
-    return timestamp;
+    
+    // Si es null o undefined, retornar fecha actual
+    if (!timestamp) {
+      return new Date();
+    }
+    
+    // Si es un número (milisegundos desde epoch)
+    if (typeof timestamp === 'number') {
+      return new Date(timestamp);
+    }
+    
+    // Si es un string, intentar parsearlo
+    if (typeof timestamp === 'string') {
+      // Remover [UTC] o cualquier zona horaria entre corchetes
+      const cleanedString = timestamp.replace(/\[.*?\]/g, '');
+      const parsed = new Date(cleanedString);
+      if (!isNaN(parsed.getTime())) {
+        return parsed;
+      }
+    }
+    
+    // Si es un array de Java LocalDateTime [year, month, day, hour, minute, second, nano]
+    if (Array.isArray(timestamp) && timestamp.length >= 3) {
+      const [year, month, day, hour = 0, minute = 0, second = 0] = timestamp;
+      return new Date(year, month - 1, day, hour, minute, second);
+    }
+    
+    console.error('❌ No se pudo convertir timestamp:', timestamp);
+    return new Date(); // Fallback
+  }
+
+  // Helper para obtener estado formateado de forma segura
+  obtenerEstadoFormateado(estado: string | undefined | null): string {
+    if (!estado) return 'Pendiente';
+    return estado.charAt(0).toUpperCase() + estado.slice(1).toLowerCase();
+  }
+
+  // Helper para obtener fecha formateada
+  obtenerFechaFormateada(fecha: any): string {
+    try {
+      const date = this.convertirTimestamp(fecha);
+      return date.toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    } catch (error) {
+      console.error('Error al formatear fecha:', error);
+      return 'Fecha no disponible';
+    }
   }
 
   // --- Lógica de Asesorías ---
