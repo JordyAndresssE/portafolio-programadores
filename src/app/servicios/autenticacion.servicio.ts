@@ -142,8 +142,12 @@ export class AutenticacionServicio {
   private redirigirSegunRol(usuario: Usuario | null) {
     if (!usuario) return;
 
+    // Limpiar espacios del rol
+    const rol = usuario.rol?.trim() || '';
+    console.log('🔀 Redirigiendo con rol:', rol);
+
     this.ngZone.run(() => {
-      switch (usuario.rol) {
+      switch (rol) {
         case 'administrador':
           this.router.navigate(['/admin']);
           break;
@@ -154,6 +158,7 @@ export class AutenticacionServicio {
           this.router.navigate(['/usuario']);
           break;
         default:
+          console.warn('⚠️ Rol no reconocido:', rol);
           this.router.navigate(['/login']);
           break;
       }

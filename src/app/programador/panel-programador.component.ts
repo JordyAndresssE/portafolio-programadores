@@ -5,9 +5,11 @@ import { AutenticacionServicio } from '../servicios/autenticacion.servicio';
 import { ProyectosBackendServicio } from '../servicios/proyectos-backend.servicio';
 import { UsuariosBackendServicio } from '../servicios/usuarios-backend.servicio';
 import { AsesoriasBackendServicio } from '../servicios/asesorias-backend.servicio';
+import { NotificacionesFastAPIServicio } from '../servicios/notificaciones-fastapi.servicio';
 import { Proyecto } from '../modelos/proyecto.modelo';
 import { Usuario } from '../modelos/usuario.modelo';
 import { Asesoria } from '../modelos/asesoria.modelo';
+import { convertirProyecto } from '../utils/convertidores';
 
 @Component({
   selector: 'app-panel-programador',
@@ -48,6 +50,7 @@ export class PanelProgramadorComponent implements OnInit {
   private proyectosBackend = inject(ProyectosBackendServicio);
   private usuariosBackend = inject(UsuariosBackendServicio);
   private asesoriasBackend = inject(AsesoriasBackendServicio);
+  private notificacionesService = inject(NotificacionesFastAPIServicio);
 
   ngOnInit() {
     this.authService.usuario$.subscribe(u => {
@@ -72,7 +75,8 @@ export class PanelProgramadorComponent implements OnInit {
     this.cargandoProyectos = true;
     this.proyectosBackend.obtenerProyectosPorProgramador(this.usuario.uid).subscribe({
       next: (p) => {
-        this.proyectos = p;
+        // Convertir tecnologias de string a array
+        this.proyectos = p.map(proyecto => convertirProyecto(proyecto));
         this.cargandoProyectos = false;
       },
       error: (error) => {
@@ -115,13 +119,35 @@ export class PanelProgramadorComponent implements OnInit {
     const mensaje = prompt(`Mensaje opcional para ${estado === 'aprobada' ? 'aprobar' : 'rechazar'} la solicitud:`);
     if (mensaje !== null) {
       try {
+        // Actualizar estado en Jakarta
         if (estado === 'aprobada') {
           await this.asesoriasBackend.aprobarAsesoria(asesoria.id!, mensaje).toPromise();
         } else {
           await this.asesoriasBackend.rechazarAsesoria(asesoria.id!, mensaje).toPromise();
         }
+        
+        // Enviar notificación automática con FastAPI
+        if (this.usuario) {
+          this.notificacionesService.notificarAsesoria({
+            id_asesoria: asesoria.id!,
+            email_programador: this.usuario.email,
+            nombre_programador: this.usuario.nombre,
+            email_usuario: asesoria.emailUsuario,
+            nombre_usuario: asesoria.nombreUsuario,
+            fecha_asesoria: asesoria.fechaAsesoria,
+            hora_asesoria: asesoria.horaAsesoria,
+            motivo: asesoria.motivo,
+            estado: estado,
+            mensaje_respuesta: mensaje,
+            tipo_notificacion: 'email'
+          }).subscribe({
+            next: () => console.log('✅ Notificación enviada'),
+            error: (err) => console.error('❌ Error al enviar notificación:', err)
+          });
+        }
+        
         this.cargarAsesorias();
-        alert(`Solicitud ${estado} correctamente.`);
+        alert(`Solicitud ${estado} correctamente. Notificación enviada al usuario.`);
       } catch (error) {
         console.error('Error al responder asesoría:', error);
         alert('Error al procesar la solicitud.');
@@ -133,7 +159,23 @@ export class PanelProgramadorComponent implements OnInit {
   async guardarPerfil() {
     if (this.perfilForm && this.perfilForm.uid) {
       try {
-        await this.usuariosBackend.actualizarUsuario(this.perfilForm.uid, this.perfilForm).toPromise();
+        // Transformar datos para que coincidan con el backend
+        const datosBackend: any = {
+          ...this.perfilForm,
+          // Convertir redesSociales a campos individuales
+          github: this.perfilForm.redesSociales?.github || null,
+          linkedin: this.perfilForm.redesSociales?.linkedin || null,
+          twitter: this.perfilForm.redesSociales?.twitter || null,
+          // Convertir array de tecnologías a String separado por comas
+          tecnologias: Array.isArray(this.perfilForm.tecnologias) 
+            ? this.perfilForm.tecnologias.join(',') 
+            : this.perfilForm.tecnologias || null
+        };
+        
+        // Eliminar el campo redesSociales del objeto que se envía
+        delete datosBackend.redesSociales;
+        
+        await this.usuariosBackend.actualizarUsuario(this.perfilForm.uid, datosBackend).toPromise();
         alert('Perfil actualizado correctamente');
       } catch (error) {
         console.error('Error al actualizar perfil:', error);
@@ -173,10 +215,15 @@ export class PanelProgramadorComponent implements OnInit {
     if (!this.usuario) return;
 
     try {
-      const datosProyecto = {
+      // Transformar datos para que coincidan con el backend
+      const datosProyecto: any = {
         ...this.proyectoForm,
-        idProgramador: this.usuario.uid
-      } as Proyecto;
+        idProgramador: this.usuario.uid,
+        // Convertir array de tecnologías a String separado por comas
+        tecnologias: Array.isArray(this.proyectoForm.tecnologias) 
+          ? this.proyectoForm.tecnologias.join(',') 
+          : this.proyectoForm.tecnologias || null
+      };
 
       if (this.proyectoEditando && this.proyectoEditando.id) {
         // Actualizar

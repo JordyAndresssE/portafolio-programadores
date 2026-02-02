@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AutenticacionServicio } from '../servicios/autenticacion.servicio';
 import { NotificacionServicio } from '../servicios/notificacion.servicio';
 import { FilterPipe } from '../compartido/filter.pipe';
+import { ReportesFastAPIServicio } from '../servicios/reportes-fastapi.servicio';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -26,6 +27,7 @@ export class AdminDashboardComponent implements OnInit {
   private usuariosBackend = inject(UsuariosBackendServicio);
   private authService = inject(AutenticacionServicio);
   private notificacionService = inject(NotificacionServicio);
+  private reportesService = inject(ReportesFastAPIServicio);
 
   ngOnInit() {
     this.cargarUsuarios();
@@ -189,6 +191,42 @@ export class AdminDashboardComponent implements OnInit {
 
   cancelarEdicion() {
     this.usuarioSeleccionado = null;
+  }
+
+  // ==========================================
+  // MÉTODOS DE REPORTES (FastAPI)
+  // ==========================================
+
+  descargarReporteAsesoriasPDF() {
+    this.notificacionService.mostrarInfo('Generando reporte PDF...');
+    
+    this.reportesService.descargarPDFAsesorias().subscribe({
+      next: (blob) => {
+        const fecha = new Date().toISOString().split('T')[0];
+        this.reportesService.descargarArchivo(blob, `reporte_asesorias_${fecha}.pdf`);
+        this.notificacionService.mostrarExito('Reporte PDF descargado');
+      },
+      error: (error) => {
+        console.error('Error al generar PDF:', error);
+        this.notificacionService.mostrarError('Error al generar el reporte PDF');
+      }
+    });
+  }
+
+  descargarReporteProyectosExcel() {
+    this.notificacionService.mostrarInfo('Generando reporte Excel...');
+    
+    this.reportesService.descargarExcelProyectos().subscribe({
+      next: (blob) => {
+        const fecha = new Date().toISOString().split('T')[0];
+        this.reportesService.descargarArchivo(blob, `reporte_proyectos_${fecha}.xlsx`);
+        this.notificacionService.mostrarExito('Reporte Excel descargado');
+      },
+      error: (error) => {
+        console.error('Error al generar Excel:', error);
+        this.notificacionService.mostrarError('Error al generar el reporte Excel');
+      }
+    });
   }
 
   cerrarSesion() {

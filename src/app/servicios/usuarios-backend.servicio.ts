@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class UsuariosBackendServicio {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiURL}/usuarios`;
+    private apiUrl = `${environment.apiSpringURL}/usuarios`;
 
     /**
      * Obtener todos los usuarios

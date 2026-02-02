@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class ProyectosBackendServicio {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiURL}/proyectos`;
+    private apiUrl = `${environment.apiSpringURL}/proyectos`;
 
     /**
      * Obtener todos los proyectos

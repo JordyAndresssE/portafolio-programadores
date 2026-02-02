@@ -1,0 +1,92 @@
+# ==========================================
+# STAGE 1: Build con Maven
+# ==========================================
+FROM maven:3.9-eclipse-temurin-17 AS builder
+
+WORKDIR /build
+
+# Copiar pom.xml primero (para aprovechar cache de Docker)
+COPY backproyecto/pom.xml .
+
+# Descargar dependencias (se cachea si pom.xml no cambia)
+RUN mvn dependency:go-offline -B
+
+# Copiar código fuente
+COPY backproyecto/src ./src
+
+# Compilar y generar WAR
+RUN mvn clean package -DskipTests
+
+# ==========================================
+# STAGE 2: Runtime con WildFly
+# ==========================================
+FROM quay.io/wildfly/wildfly:38.0.1.Final-jdk17
+
+USER root
+
+# Instalar MySQL driver en WildFly
+RUN mkdir -p /opt/jboss/wildfly/modules/system/layers/base/com/mysql/main
+
+# Descargar MySQL Connector
+RUN curl -o /opt/jboss/wildfly/modules/system/layers/base/com/mysql/main/mysql-connector-j-9.1.0.jar \
+    https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/9.1.0/mysql-connector-j-9.1.0.jar
+
+# Crear module.xml para MySQL
+RUN cat > /opt/jboss/wildfly/modules/system/layers/base/com/mysql/main/module.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.5" name="com.mysql">
+    <resources>
+        <resource-root path="mysql-connector-j-9.1.0.jar"/>
+    </resources>
+    <dependencies>
+        <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
+    </dependencies>
+</module>
+EOF
+
+# Copiar WAR desde stage builder
+COPY --from=builder /build/target/backproyecto.war /opt/jboss/wildfly/standalone/deployments/
+
+# Crear script de configuración de DataSource dinámico
+RUN cat > /opt/jboss/wildfly/bin/configure-and-start.sh << 'EOF'
+#!/bin/bash
+
+# Extraer datos de MYSQL_URL o DATABASE_URL de Railway
+# Formato: mysql://user:pass@host:port/database
+DB_URL="${MYSQL_URL:-$DATABASE_URL}"
+
+if [ -n "$DB_URL" ]; then
+  DB_USER=$(echo $DB_URL | sed -e "s/mysql:\/\/\([^:]*\):.*/\1/")
+  DB_PASS=$(echo $DB_URL | sed -e "s/mysql:\/\/[^:]*:\([^@]*\)@.*/\1/")
+  DB_HOST=$(echo $DB_URL | sed -e "s/.*@\([^:]*\):.*/\1/")
+  DB_PORT=$(echo $DB_URL | sed -e "s/.*:\([0-9]*\)\/.*/\1/")
+  DB_NAME=$(echo $DB_URL | sed -e "s/.*\/\(.*\)/\1/")
+else
+  DB_USER=${DB_USER:-root}
+  DB_PASS=${DB_PASS:-password}
+  DB_HOST=${DB_HOST:-localhost}
+  DB_PORT=${DB_PORT:-3306}
+  DB_NAME=${DB_NAME:-portafolio_programadores}
+fi
+
+# Configurar DataSource con variables de entorno
+/opt/jboss/wildfly/bin/jboss-cli.sh --commands="embed-server,\
+  /subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-class-name=com.mysql.cj.jdbc.Driver),\
+  data-source add --name=PortafolioDS --jndi-name=java:jboss/datasources/PortafolioDS --driver-name=mysql --connection-url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false\&serverTimezone=America/Guayaquil\&allowPublicKeyRetrieval=true --user-name=${DB_USER} --password=${DB_PASS} --validate-on-match=true --background-validation=false --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter,\
+  stop-embedded-server"
+
+# Iniciar WildFly
+/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
+EOF
+
+RUN chmod +x /opt/jboss/wildfly/bin/configure-and-start.sh
+
+# Volver a usuario jboss (seguridad)
+USER jboss
+
+# Railway asigna PORT dinámicamente, pero WildFly usa 8080
+EXPOSE 8080
+
+# Ejecutar script de configuración
+CMD ["/opt/jboss/wildfly/bin/configure-and-start.sh"]

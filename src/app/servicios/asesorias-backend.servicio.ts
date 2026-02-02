@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class AsesoriasBackendServicio {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiURL}/asesorias`;
+    private apiUrl = `${environment.apiJakartaURL}/asesorias`;
 
     /**
      * Obtener todas las asesorías
