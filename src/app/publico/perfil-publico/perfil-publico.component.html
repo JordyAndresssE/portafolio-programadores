@@ -71,21 +71,31 @@
 
             <div class="request-form">
                 <div class="form-group">
-                    <label>Motivo de la asesoría</label>
+                    <label>Motivo de la asesoría *</label>
                     <input [(ngModel)]="solicitud.motivo"
-                        placeholder="Ej: Revisión de código, Orientación profesional...">
+                        placeholder="Ej: Revisión de código, Orientación profesional..."
+                        [disabled]="enviandoSolicitud">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Fecha Propuesta</label>
-                        <input type="date" [(ngModel)]="solicitud.fechaAsesoria">
+                        <label>Fecha Propuesta *</label>
+                        <input type="date" [(ngModel)]="solicitud.fechaAsesoria"
+                            [disabled]="enviandoSolicitud">
                     </div>
                     <div class="form-group">
-                        <label>Hora Propuesta</label>
-                        <input type="time" [(ngModel)]="solicitud.horaAsesoria">
+                        <label>Hora Propuesta *</label>
+                        <input type="time" [(ngModel)]="solicitud.horaAsesoria"
+                            [disabled]="enviandoSolicitud">
                     </div>
                 </div>
-                <button (click)="enviarSolicitud()" class="send-btn">Enviar Solicitud</button>
+                
+                <button 
+                    (click)="enviarSolicitud()" 
+                    class="send-btn"
+                    [disabled]="enviandoSolicitud"
+                    [class.disabled]="enviandoSolicitud">
+                    {{ enviandoSolicitud ? 'Enviando...' : 'Enviar Solicitud' }}
+                </button>
             </div>
         </section>
 

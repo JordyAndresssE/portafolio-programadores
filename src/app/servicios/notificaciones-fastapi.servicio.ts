@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 })
 export class NotificacionesFastAPIServicio {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiFastAPIURL}/notificaciones`;
+    private apiUrl = `${environment.apiFastAPIURL}/api/notificaciones`;
 
     /**
      * Enviar email individual

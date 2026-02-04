@@ -28,6 +28,9 @@ export class PanelProgramadorComponent implements OnInit {
   // Estados de carga
   cargandoProyectos = true;
   cargandoAsesorias = true;
+  guardandoPerfil = false;
+  guardandoProyecto = false;
+  respondiendoAsesoria = false;
 
   // Perfil
   perfilForm: Usuario | null = null;
@@ -177,9 +180,13 @@ export class PanelProgramadorComponent implements OnInit {
 
   // --- Lógica de Asesorías ---
   async responderAsesoria(asesoria: Asesoria, estado: 'aprobada' | 'rechazada') {
+    if (this.respondiendoAsesoria) return;
+
     const mensaje = prompt(`Mensaje opcional para ${estado === 'aprobada' ? 'aprobar' : 'rechazar'} la solicitud:`);
     if (mensaje !== null) {
       try {
+        this.respondiendoAsesoria = true;
+        
         // Actualizar estado en Jakarta
         if (estado === 'aprobada') {
           await this.asesoriasBackend.aprobarAsesoria(asesoria.id!, mensaje).toPromise();
@@ -212,25 +219,53 @@ export class PanelProgramadorComponent implements OnInit {
       } catch (error) {
         console.error('Error al responder asesoría:', error);
         alert('Error al procesar la solicitud.');
+      } finally {
+        this.respondiendoAsesoria = false;
       }
     }
   }
 
   // --- Lógica de Perfil ---
+  validarPerfil(): string | null {
+    if (!this.perfilForm) return 'No hay datos de perfil';
+    
+    if (!this.perfilForm.nombre?.trim()) {
+      return 'El nombre es obligatorio';
+    }
+    
+    if (!this.perfilForm.especialidad?.trim()) {
+      return 'La especialidad es obligatoria';
+    }
+    
+    return null;
+  }
+
   async guardarPerfil() {
-    if (this.perfilForm && this.perfilForm.uid) {
-      try {
-        // ✅ Usar convertidor DTO para transformar datos al formato del backend
-        const usuarioDTO = convertirUsuarioABackend(this.perfilForm);
-        
-        console.log('📤 Enviando perfil al backend:', usuarioDTO);
-        
-        await this.usuariosBackend.actualizarUsuario(this.perfilForm.uid, usuarioDTO).toPromise();
-        alert('Perfil actualizado correctamente');
-      } catch (error) {
-        console.error('Error al actualizar perfil:', error);
-        alert('Error al actualizar perfil');
-      }
+    if (!this.perfilForm || !this.perfilForm.uid) return;
+
+    const errorValidacion = this.validarPerfil();
+    if (errorValidacion) {
+      alert(errorValidacion);
+      return;
+    }
+
+    if (this.guardandoPerfil) return;
+
+    try {
+      this.guardandoPerfil = true;
+      
+      // ✅ Usar convertidor DTO para transformar datos al formato del backend
+      const usuarioDTO = convertirUsuarioABackend(this.perfilForm);
+      
+      console.log('📤 Enviando perfil al backend:', usuarioDTO);
+      
+      await this.usuariosBackend.actualizarUsuario(this.perfilForm.uid, usuarioDTO).toPromise();
+      alert('Perfil actualizado correctamente');
+    } catch (error) {
+      console.error('Error al actualizar perfil:', error);
+      alert('Error al actualizar perfil');
+    } finally {
+      this.guardandoPerfil = false;
     }
   }
 
@@ -261,10 +296,36 @@ export class PanelProgramadorComponent implements OnInit {
     this.proyectoForm.tecnologias = valor.split(',').map(t => t.trim()).filter(t => t.length > 0);
   }
 
+  validarProyecto(): string | null {
+    if (!this.proyectoForm.nombre?.trim()) {
+      return 'El nombre del proyecto es obligatorio';
+    }
+    
+    if (!this.proyectoForm.descripcion?.trim()) {
+      return 'La descripción es obligatoria';
+    }
+    
+    if (!this.proyectoForm.tecnologias || this.proyectoForm.tecnologias.length === 0) {
+      return 'Debes agregar al menos una tecnología';
+    }
+    
+    return null;
+  }
+
   async guardarProyecto() {
     if (!this.usuario) return;
 
+    const errorValidacion = this.validarProyecto();
+    if (errorValidacion) {
+      alert(errorValidacion);
+      return;
+    }
+
+    if (this.guardandoProyecto) return;
+
     try {
+      this.guardandoProyecto = true;
+      
       // Transformar datos para que coincidan con el backend
       const datosProyecto: any = {
         ...this.proyectoForm,
@@ -285,9 +346,12 @@ export class PanelProgramadorComponent implements OnInit {
       }
       this.cargarProyectos();
       this.cerrarModalProyecto();
+      alert('Proyecto guardado correctamente');
     } catch (error) {
       console.error('Error al guardar proyecto:', error);
       alert('Error al guardar el proyecto');
+    } finally {
+      this.guardandoProyecto = false;
     }
   }
 

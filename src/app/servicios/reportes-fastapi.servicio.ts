@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 })
 export class ReportesFastAPIServicio {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiFastAPIURL}/reportes`;
+    private apiUrl = `${environment.apiFastAPIURL}/api/reportes`;
 
     /**
      * Obtener dashboard de asesorías con estadísticas

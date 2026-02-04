@@ -71,15 +71,19 @@
         <button 
           class="btn btn-report" 
           (click)="descargarReporteAsesoriasPDF()"
+          [disabled]="generandoReporte"
+          [class.disabled]="generandoReporte"
           style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-          📄 Descargar Reporte Asesorías (PDF)
+          {{ generandoReporte ? '⏳ Generando...' : '📄 Descargar Reporte Asesorías (PDF)' }}
         </button>
         
         <button 
           class="btn btn-report" 
           (click)="descargarReporteProyectosExcel()"
+          [disabled]="generandoReporte"
+          [class.disabled]="generandoReporte"
           style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-          📊 Descargar Reporte Proyectos (Excel)
+          {{ generandoReporte ? '⏳ Generando...' : '📊 Descargar Reporte Proyectos (Excel)' }}
         </button>
       </div>
     </section>
@@ -235,8 +239,12 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
-        <button class="btn btn-save" (click)="guardarCambios()" [disabled]="guardando">
+        <button class="btn btn-cancel" (click)="cancelarEdicion()" [disabled]="guardando">Cancelar</button>
+        <button 
+          class="btn btn-save" 
+          (click)="guardarCambios()" 
+          [disabled]="guardando"
+          [class.disabled]="guardando">
           {{ guardando ? 'Guardando...' : 'Guardar' }}
         </button>
       </div>

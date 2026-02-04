@@ -104,7 +104,13 @@
                 </div>
 
                 <div class="profile-actions">
-                    <button (click)="guardarPerfil()" class="save-btn">Guardar Cambios</button>
+                    <button 
+                        (click)="guardarPerfil()" 
+                        class="save-btn"
+                        [disabled]="guardandoPerfil"
+                        [class.disabled]="guardandoPerfil">
+                        {{ guardandoPerfil ? 'Guardando...' : 'Guardar Cambios' }}
+                    </button>
                 </div>
             </div>
         </section>
@@ -137,8 +143,20 @@
                     </div>
 
                     <div class="advisory-actions" *ngIf="asesoria.estado === 'pendiente'">
-                        <button (click)="responderAsesoria(asesoria, 'aprobada')" class="accept-btn">Aceptar</button>
-                        <button (click)="responderAsesoria(asesoria, 'rechazada')" class="reject-btn">Rechazar</button>
+                        <button 
+                            (click)="responderAsesoria(asesoria, 'aprobada')" 
+                            class="accept-btn"
+                            [disabled]="respondiendoAsesoria"
+                            [class.disabled]="respondiendoAsesoria">
+                            {{ respondiendoAsesoria ? 'Procesando...' : 'Aceptar' }}
+                        </button>
+                        <button 
+                            (click)="responderAsesoria(asesoria, 'rechazada')" 
+                            class="reject-btn"
+                            [disabled]="respondiendoAsesoria"
+                            [class.disabled]="respondiendoAsesoria">
+                            {{ respondiendoAsesoria ? 'Procesando...' : 'Rechazar' }}
+                        </button>
                     </div>
 
                     <div class="advisory-response" *ngIf="asesoria.estado !== 'pendiente'">
@@ -210,8 +228,14 @@
             </div>
 
             <div class="modal-actions">
-                <button (click)="guardarProyecto()" class="save-btn">Guardar</button>
-                <button (click)="cerrarModalProyecto()" class="cancel-btn">Cancelar</button>
+                <button 
+                    (click)="guardarProyecto()" 
+                    class="save-btn"
+                    [disabled]="guardandoProyecto"
+                    [class.disabled]="guardandoProyecto">
+                    {{ guardandoProyecto ? 'Guardando...' : 'Guardar' }}
+                </button>
+                <button (click)="cerrarModalProyecto()" class="cancel-btn" [disabled]="guardandoProyecto">Cancelar</button>
             </div>
         </div>
     </div>

@@ -22,6 +22,7 @@ export class AdminDashboardComponent implements OnInit {
   usuarioSeleccionado: Usuario | null = null;
   filtro = '';
   guardando = false;
+  generandoReporte = false;
 
   diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
@@ -157,6 +158,19 @@ export class AdminDashboardComponent implements OnInit {
   async guardarCambios() {
     if (!this.usuarioSeleccionado || !this.usuarioSeleccionado.uid) return;
 
+    // Validar campos obligatorios
+    if (!this.usuarioSeleccionado.nombre?.trim()) {
+      this.notificacionService.mostrarAdvertencia('El nombre es obligatorio');
+      return;
+    }
+
+    if (!this.usuarioSeleccionado.email?.trim()) {
+      this.notificacionService.mostrarAdvertencia('El email es obligatorio');
+      return;
+    }
+
+    if (this.guardando) return;
+
     // Confirmación antes de guardar
     const confirmar = confirm(
       `¿Estás seguro de que deseas guardar los cambios para ${this.usuarioSeleccionado.nombre}?\n\n` +
@@ -204,6 +218,9 @@ export class AdminDashboardComponent implements OnInit {
   // ==========================================
 
   descargarReporteAsesoriasPDF() {
+    if (this.generandoReporte) return;
+    
+    this.generandoReporte = true;
     this.notificacionService.mostrarInfo('Generando reporte PDF...');
     
     this.reportesService.descargarPDFAsesorias().subscribe({
@@ -211,15 +228,20 @@ export class AdminDashboardComponent implements OnInit {
         const fecha = new Date().toISOString().split('T')[0];
         this.reportesService.descargarArchivo(blob, `reporte_asesorias_${fecha}.pdf`);
         this.notificacionService.mostrarExito('Reporte PDF descargado');
+        this.generandoReporte = false;
       },
       error: (error) => {
         console.error('Error al generar PDF:', error);
         this.notificacionService.mostrarError('Error al generar el reporte PDF');
+        this.generandoReporte = false;
       }
     });
   }
 
   descargarReporteProyectosExcel() {
+    if (this.generandoReporte) return;
+    
+    this.generandoReporte = true;
     this.notificacionService.mostrarInfo('Generando reporte Excel...');
     
     this.reportesService.descargarExcelProyectos().subscribe({
@@ -227,10 +249,12 @@ export class AdminDashboardComponent implements OnInit {
         const fecha = new Date().toISOString().split('T')[0];
         this.reportesService.descargarArchivo(blob, `reporte_proyectos_${fecha}.xlsx`);
         this.notificacionService.mostrarExito('Reporte Excel descargado');
+        this.generandoReporte = false;
       },
       error: (error) => {
         console.error('Error al generar Excel:', error);
         this.notificacionService.mostrarError('Error al generar el reporte Excel');
+        this.generandoReporte = false;
       }
     });
   }

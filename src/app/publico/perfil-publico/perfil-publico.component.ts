@@ -23,6 +23,7 @@ export class PerfilPublicoComponent implements OnInit {
   programador: Usuario | null = null;
   proyectos: Proyecto[] = [];
   usuarioActual: Usuario | null = null;
+  enviandoSolicitud = false;
 
   solicitud: Partial<Asesoria> = {
     motivo: '',
@@ -44,7 +45,9 @@ export class PerfilPublicoComponent implements OnInit {
       this.cargarProyectos(id);
     }
 
-    this.authService.usuario$.subscribe(u => this.usuarioActual = u);
+    this.authService.usuario$.subscribe(u => {
+      this.usuarioActual = u;
+    });
   }
 
   cargarProgramador(id: string) {
@@ -65,13 +68,39 @@ export class PerfilPublicoComponent implements OnInit {
     });
   }
 
+  validarFormulario(): string | null {
+    if (!this.solicitud.motivo?.trim()) {
+      return 'Por favor indica el motivo de la asesoría.';
+    }
+    if (!this.solicitud.fechaAsesoria) {
+      return 'Por favor selecciona una fecha.';
+    }
+    if (!this.solicitud.horaAsesoria) {
+      return 'Por favor selecciona una hora.';
+    }
+
+    // Validar que la fecha no sea en el pasado
+    const fechaSeleccionada = new Date(this.solicitud.fechaAsesoria + 'T' + this.solicitud.horaAsesoria);
+    const ahora = new Date();
+    if (fechaSeleccionada < ahora) {
+      return 'La fecha y hora seleccionadas no pueden estar en el pasado.';
+    }
+
+    return null;
+  }
+
   async enviarSolicitud() {
     if (!this.usuarioActual || !this.programador) return;
 
-    if (!this.solicitud.motivo || !this.solicitud.fechaAsesoria || !this.solicitud.horaAsesoria) {
-      alert('Por favor completa todos los campos de la solicitud.');
+    // Validar formulario
+    const errorValidacion = this.validarFormulario();
+    if (errorValidacion) {
+      alert(errorValidacion);
       return;
     }
+
+    // Bloquear botón para evitar doble envío
+    if (this.enviandoSolicitud) return;
 
     // Validar disponibilidad
     if (this.programador.disponibilidad) {
@@ -89,7 +118,7 @@ export class PerfilPublicoComponent implements OnInit {
         }
 
         const horaSolicitada = this.solicitud.horaAsesoria;
-        if (horaSolicitada < horarioDia.horaInicio || horaSolicitada > horarioDia.horaFin) {
+        if (horaSolicitada && (horaSolicitada < horarioDia.horaInicio || horaSolicitada > horarioDia.horaFin)) {
           alert(`La hora solicitada está fuera del horario de atención para ${diaSolicitado} (${horarioDia.horaInicio} - ${horarioDia.horaFin}).`);
           return;
         }
@@ -105,7 +134,7 @@ export class PerfilPublicoComponent implements OnInit {
         const horaFin = this.programador.disponibilidad.horaFin;
         const horaSolicitada = this.solicitud.horaAsesoria;
 
-        if (horaInicio && horaFin && (horaSolicitada < horaInicio || horaSolicitada > horaFin)) {
+        if (horaInicio && horaFin && horaSolicitada && (horaSolicitada < horaInicio || horaSolicitada > horaFin)) {
           alert(`La hora solicitada está fuera del horario de atención (${horaInicio} - ${horaFin}).`);
           return;
         }
@@ -113,6 +142,8 @@ export class PerfilPublicoComponent implements OnInit {
     }
 
     try {
+      this.enviandoSolicitud = true;
+      
       const nuevaAsesoria: Asesoria = {
         idProgramador: this.programador.uid!,
         idUsuario: this.usuarioActual.uid!,
@@ -137,11 +168,14 @@ export class PerfilPublicoComponent implements OnInit {
         this.solicitud.motivo!
       );
 
-      alert('Solicitud enviada con éxito.');
+      alert('Solicitud enviada con éxito. El programador recibirá tu solicitud y te responderá pronto.');
       this.solicitud = { motivo: '', fechaAsesoria: '', horaAsesoria: '' };
+      this.tieneSolicitudActiva = true;
     } catch (error) {
       console.error('Error al enviar solicitud:', error);
-      alert('Error al enviar la solicitud.');
+      alert('Error al enviar la solicitud. Por favor inténtalo de nuevo.');
+    } finally {
+      this.enviandoSolicitud = false;
     }
   }
 }
