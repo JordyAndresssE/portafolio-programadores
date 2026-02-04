@@ -62,18 +62,17 @@
     </div>
 
     <!-- SECCIÓN DE REPORTES -->
-    <section class="reports-section" style="margin-bottom: 2rem;">
+    <section class="reports-section">
       <div class="section-header">
         <h2>📊 Reportes Administrativos</h2>
       </div>
       
-      <div class="reports-actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <div class="reports-actions">
         <button 
           class="btn btn-report" 
           (click)="descargarReporteAsesoriasPDF()"
           [disabled]="generandoReporte"
-          [class.disabled]="generandoReporte"
-          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+          [class.disabled]="generandoReporte">
           {{ generandoReporte ? '⏳ Generando...' : '📄 Descargar Reporte Asesorías (PDF)' }}
         </button>
         
@@ -81,8 +80,7 @@
           class="btn btn-report" 
           (click)="descargarReporteProyectosExcel()"
           [disabled]="generandoReporte"
-          [class.disabled]="generandoReporte"
-          style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+          [class.disabled]="generandoReporte">
           {{ generandoReporte ? '⏳ Generando...' : '📊 Descargar Reporte Proyectos (Excel)' }}
         </button>
       </div>
@@ -118,7 +116,7 @@
               <td>
                 <div class="user-cell">
                   <img [src]="usuario.fotoPerfil || 'https://ui-avatars.com/api/?name=' + usuario.nombre"
-                    [alt]="usuario.nombre" class="user-avatar">
+                    [alt]="usuario.nombre" [title]="usuario.nombre" class="user-avatar">
                   <span>{{ usuario.nombre }}</span>
                 </div>
               </td>
@@ -164,7 +162,8 @@
         <!-- Vista previa -->
         <div class="user-preview">
           <img
-            [src]="usuarioSeleccionado.fotoPerfil || 'https://ui-avatars.com/api/?name=' + usuarioSeleccionado.nombre">
+            [src]="usuarioSeleccionado.fotoPerfil || 'https://ui-avatars.com/api/?name=' + usuarioSeleccionado.nombre"
+            [alt]="'Foto de ' + usuarioSeleccionado.nombre" [title]="usuarioSeleccionado.nombre">
           <div>
             <h4>{{ usuarioSeleccionado.nombre }}</h4>
             <p>{{ usuarioSeleccionado.email }}</p>
@@ -174,7 +173,7 @@
         <!-- Select rol -->
         <div class="form-group">
           <label>Rol de Usuario</label>
-          <select [(ngModel)]="usuarioSeleccionado.rol" class="form-control">
+          <select [(ngModel)]="usuarioSeleccionado.rol" class="form-control" aria-label="Rol del usuario">
             <option value="usuario">Usuario</option>
             <option value="programador">Programador</option>
             <option value="administrador">Administrador</option>
@@ -192,7 +191,7 @@
 
           <div class="form-group">
             <label>Descripción</label>
-            <textarea [(ngModel)]="usuarioSeleccionado.descripcion" rows="3" class="form-control"></textarea>
+            <textarea [(ngModel)]="usuarioSeleccionado.descripcion" rows="3" class="form-control" aria-label="Descripción del usuario"></textarea>
           </div>
 
           <div class="form-group">
@@ -220,13 +219,13 @@
                     <div class="input-group">
                       <label>Desde</label>
                       <input type="time" [value]="getHoraInicio(dia)" (change)="setHoraInicio(dia, $event)"
-                        class="time-input">
+                        class="time-input" [aria-label]="'Hora de inicio para ' + dia">
                     </div>
                     <span class="separator">→</span>
                     <div class="input-group">
                       <label>Hasta</label>
                       <input type="time" [value]="getHoraFin(dia)" (change)="setHoraFin(dia, $event)"
-                        class="time-input">
+                        class="time-input" [aria-label]="'Hora de fin para ' + dia">
                     </div>
                   </div>
                 </div>

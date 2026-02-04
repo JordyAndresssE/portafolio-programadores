@@ -9,7 +9,7 @@
             <div class="user-menu" *ngIf="usuario$ | async as usuario">
                 <div class="user-info">
                     <img [src]="usuario.fotoPerfil || 'https://via.placeholder.com/40'" [alt]="usuario.nombre"
-                        class="user-avatar">
+                        [title]="usuario.nombre" class="user-avatar">
                     <div class="user-details">
                         <span class="user-name">{{ usuario.nombre }}</span>
                         <span class="user-role">Cliente</span>
@@ -47,7 +47,7 @@
                     <div *ngFor="let programador of programadores" class="programador-card">
                         <div class="card-header">
                             <img [src]="programador.fotoPerfil || 'https://via.placeholder.com/80'"
-                                [alt]="programador.nombre" class="programador-avatar">
+                                [alt]="programador.nombre" [title]="programador.nombre" class="programador-avatar">
                             <div class="programador-info">
                                 <h3>{{ programador.nombre }}</h3>
                                 <p class="especialidad" *ngIf="programador.especialidad">

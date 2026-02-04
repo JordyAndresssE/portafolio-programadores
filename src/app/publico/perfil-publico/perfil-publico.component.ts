@@ -170,7 +170,6 @@ export class PerfilPublicoComponent implements OnInit {
 
       alert('Solicitud enviada con éxito. El programador recibirá tu solicitud y te responderá pronto.');
       this.solicitud = { motivo: '', fechaAsesoria: '', horaAsesoria: '' };
-      this.tieneSolicitudActiva = true;
     } catch (error) {
       console.error('Error al enviar solicitud:', error);
       alert('Error al enviar la solicitud. Por favor inténtalo de nuevo.');

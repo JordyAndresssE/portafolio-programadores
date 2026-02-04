@@ -189,20 +189,20 @@
 
             <div class="form-group">
                 <label>Descripción</label>
-                <textarea [(ngModel)]="proyectoForm.descripcion" rows="3"></textarea>
+                <textarea [(ngModel)]="proyectoForm.descripcion" rows="3" aria-label="Descripción del proyecto"></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Tipo</label>
-                    <select [(ngModel)]="proyectoForm.tipo">
+                    <select [(ngModel)]="proyectoForm.tipo" aria-label="Tipo de proyecto">
                         <option value="academico">Académico</option>
                         <option value="laboral">Laboral</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Participación</label>
-                    <select [(ngModel)]="proyectoForm.participacion">
+                    <select [(ngModel)]="proyectoForm.participacion" aria-label="Tipo de participación">
                         <option value="Frontend">Frontend</option>
                         <option value="Backend">Backend</option>
                         <option value="Base de Datos">Base de Datos</option>
@@ -219,12 +219,12 @@
 
             <div class="form-group">
                 <label>URL Repositorio (GitHub)</label>
-                <input [(ngModel)]="proyectoForm.repoUrl">
+                <input [(ngModel)]="proyectoForm.repoUrl" aria-label="URL del repositorio">
             </div>
 
             <div class="form-group">
                 <label>URL Demo (Despliegue)</label>
-                <input [(ngModel)]="proyectoForm.demoUrl">
+                <input [(ngModel)]="proyectoForm.demoUrl" aria-label="URL de la demo">
             </div>
 
             <div class="modal-actions">

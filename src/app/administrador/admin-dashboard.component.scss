@@ -5,6 +5,7 @@
 
 .admin-header {
   background: rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   padding: 20px 0;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
@@ -178,12 +179,54 @@
   }
 }
 
+.reports-section {
+  margin-bottom: 2rem;
+  
+  .reports-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    
+    .btn-report {
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      
+      &:first-child {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      
+      &:last-child {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+      
+      &:disabled, &.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+}
+
 .users-section {
   background: rgba(18, 18, 18, 0.6);
   border-radius: 24px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 
   .section-header {
@@ -356,6 +399,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
 
@@ -560,6 +604,7 @@
         align-items: center;
         gap: 12px;
         cursor: pointer;
+        -webkit-user-select: none;
         user-select: none;
 
         input[type="checkbox"] {
