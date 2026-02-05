@@ -1,7 +1,7 @@
 <div class="profile-container" *ngIf="programador">
     <header class="profile-header">
         <div class="header-content">
-            <img [src]="programador.fotoPerfil || 'assets/default-avatar.png'" [alt]="'Foto de perfil de ' + programador.nombre" [title]="programador.nombre" class="avatar-large">
+            <img [src]="programador.fotoPerfil || 'assets/default-avatar.png'" [alt]="'Foto de perfil de ' + programador.nombre" [title]="'Perfil de ' + programador.nombre" class="avatar-large">
             <div class="info">
                 <h1>{{ programador.nombre }}</h1>
                 <h2 class="specialty">{{ programador.especialidad }}</h2>

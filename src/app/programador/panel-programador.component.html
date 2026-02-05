@@ -59,34 +59,56 @@
             <h2>Editar Perfil</h2>
             <div class="profile-card" *ngIf="perfilForm">
                 <div class="form-group">
-                    <label>Nombre Completo</label>
-                    <input [(ngModel)]="perfilForm.nombre" placeholder="Tu nombre">
+                    <label>Nombre Completo <span class="required">*</span></label>
+                    <input [(ngModel)]="perfilForm.nombre" 
+                           placeholder="Tu nombre completo"
+                           [class.invalid]="perfilFormSubmitted && (!perfilForm.nombre || perfilForm.nombre.trim().length < 3)">
+                    <span class="error-message" *ngIf="perfilFormSubmitted && !perfilForm.nombre || (perfilForm.nombre && !perfilForm.nombre.trim())">
+                        El nombre es obligatorio
+                    </span>
+                    <span class="error-message" *ngIf="perfilFormSubmitted && perfilForm.nombre && perfilForm.nombre.trim().length > 0 && perfilForm.nombre.trim().length < 3">
+                        El nombre debe tener al menos 3 caracteres
+                    </span>
                 </div>
 
                 <div class="form-group">
-                    <label>Especialidad</label>
-                    <input [(ngModel)]="perfilForm.especialidad" placeholder="Ej: Desarrollador Frontend">
+                    <label>Especialidad <span class="required">*</span></label>
+                    <input [(ngModel)]="perfilForm.especialidad" 
+                           placeholder="Ej: Desarrollador Frontend"
+                           [class.invalid]="perfilFormSubmitted && (!perfilForm.especialidad || perfilForm.especialidad.trim().length < 3)">
+                    <span class="error-message" *ngIf="perfilFormSubmitted && !perfilForm.especialidad?.trim()">
+                        La especialidad es obligatoria
+                    </span>
+                    <span class="error-message" *ngIf="perfilFormSubmitted && perfilForm.especialidad && perfilForm.especialidad.trim().length > 0 && perfilForm.especialidad.trim().length < 3">
+                        La especialidad debe tener al menos 3 caracteres
+                    </span>
                 </div>
 
                 <div class="form-group">
                     <label>Descripción Profesional</label>
-                    <textarea [(ngModel)]="perfilForm.descripcion" rows="4"
-                        placeholder="Cuéntanos sobre ti..."></textarea>
+                    <textarea [(ngModel)]="perfilForm.descripcion" 
+                              rows="4"
+                              placeholder="Cuéntanos sobre ti... (opcional, mínimo 20 caracteres si decides completarla)"
+                              [class.invalid]="perfilFormSubmitted && perfilForm.descripcion && perfilForm.descripcion.trim().length > 0 && perfilForm.descripcion.trim().length < 20"></textarea>
+                    <span class="error-message" *ngIf="perfilFormSubmitted && perfilForm.descripcion && perfilForm.descripcion.trim().length > 0 && perfilForm.descripcion.trim().length < 20">
+                        La descripción debe tener al menos 20 caracteres o dejarse vacía
+                    </span>
                 </div>
 
                 <div class="form-group">
                     <label>URL Foto de Perfil</label>
-                    <input [(ngModel)]="perfilForm.fotoPerfil" placeholder="https://...">
+                    <input [(ngModel)]="perfilForm.fotoPerfil" 
+                           placeholder="https://example.com/foto.jpg">
                     <img *ngIf="perfilForm.fotoPerfil" [src]="perfilForm.fotoPerfil" class="preview-img"
                         alt="Vista previa">
                 </div>
 
                 <div class="form-group">
-                    <label>Teléfono WhatsApp 📱</label>
+                    <label>Teléfono WhatsApp</label>
                     <input [(ngModel)]="perfilForm.telefono" 
                            placeholder="+593991234567 (incluir código de país)"
                            aria-label="Número de teléfono para WhatsApp">
-                    <small class="help-text">⚠️ Incluye el código de país (ej: +593 para Ecuador) para recibir notificaciones por WhatsApp</small>
+                    <small class="help-text">Incluye el código de país (ej: +593 para Ecuador) para recibir notificaciones por WhatsApp</small>
                 </div>
 
                 <h3>Redes Sociales</h3>
@@ -108,6 +130,56 @@
                     <div class="form-group">
                         <label>Sitio Web Personal</label>
                         <input [(ngModel)]="perfilForm.redesSociales!.sitioWeb" placeholder="URL Sitio Web">
+                    </div>
+                </div>
+
+                <h3>Disponibilidad para Asesorías</h3>
+                
+                <div class="disponibilidad-section">
+                    <div class="form-group-inline">
+                        <label>Modalidad de Atención</label>
+                        <select [(ngModel)]="perfilForm.disponibilidad!.modalidad" aria-label="Modalidad de asesorías">
+                            <option value="virtual">Virtual</option>
+                            <option value="presencial">Presencial</option>
+                            <option value="hibrido">Híbrido</option>
+                        </select>
+                    </div>
+
+                    <div class="horarios-header">
+                        <label class="section-label">Horarios Semanales</label>
+                        <p class="help-text">Activa los días y configura tus horarios</p>
+                    </div>
+                    
+                    <div class="dias-grid">
+                        <div *ngFor="let dia of diasSemana" class="dia-card" [class.activo]="esDiaActivo(dia)">
+                            <div class="dia-toggle">
+                                <label class="switch">
+                                    <input type="checkbox" 
+                                           [checked]="esDiaActivo(dia)" 
+                                           (change)="toggleDia(dia)"
+                                           [attr.aria-label]="'Disponibilidad ' + dia">
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="dia-nombre">{{ dia }}</span>
+                            </div>
+                            
+                            <div class="horario-campos" *ngIf="esDiaActivo(dia)">
+                                <div class="tiempo-input">
+                                    <label>Desde</label>
+                                    <input type="time" 
+                                           [value]="getHoraInicio(dia)" 
+                                           (change)="setHoraInicio(dia, $event)"
+                                           [attr.aria-label]="'Hora inicio ' + dia">
+                                </div>
+                                <div class="tiempo-input">
+                                    <label>Hasta</label>
+                                    <input type="time" 
+                                           [value]="getHoraFin(dia)" 
+                                           (change)="setHoraFin(dia, $event)"
+                                           [attr.aria-label]="'Hora fin ' + dia">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -190,61 +262,90 @@
         <div class="modal-content">
             <h3>{{ proyectoEditando?.id ? 'Editar' : 'Nuevo' }} Proyecto</h3>
 
-            <div class="form-group">
-                <label>Nombre del Proyecto</label>
-                <input [(ngModel)]="proyectoForm.nombre" placeholder="Ej: E-commerce Angular">
-            </div>
-
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea [(ngModel)]="proyectoForm.descripcion" rows="3" aria-label="Descripción del proyecto"></textarea>
-            </div>
-
-            <div class="form-row">
+            <form [formGroup]="proyectoFormGroup">
                 <div class="form-group">
-                    <label>Tipo</label>
-                    <select [(ngModel)]="proyectoForm.tipo" aria-label="Tipo de proyecto">
-                        <option value="academico">Académico</option>
-                        <option value="laboral">Laboral</option>
-                    </select>
+                    <label>Nombre del Proyecto <span class="required">*</span></label>
+                    <input formControlName="nombre" placeholder="Ej: E-commerce Angular"
+                           [class.invalid]="mostrarErrorCampo('nombre')">
+                    <span class="error-message" *ngIf="mostrarErrorCampo('nombre')">
+                        {{ obtenerMensajeError('nombre') }}
+                    </span>
                 </div>
+
                 <div class="form-group">
-                    <label>Participación</label>
-                    <select [(ngModel)]="proyectoForm.participacion" aria-label="Tipo de participación">
-                        <option value="Frontend">Frontend</option>
-                        <option value="Backend">Backend</option>
-                        <option value="Base de Datos">Base de Datos</option>
-                        <option value="Fullstack">Fullstack</option>
-                    </select>
+                    <label>Descripción <span class="required">*</span></label>
+                    <textarea formControlName="descripcion" rows="3" 
+                              placeholder="Describe tu proyecto (mínimo 10 caracteres)"
+                              aria-label="Descripción del proyecto"
+                              [class.invalid]="mostrarErrorCampo('descripcion')"></textarea>
+                    <span class="error-message" *ngIf="mostrarErrorCampo('descripcion')">
+                        {{ obtenerMensajeError('descripcion') }}
+                    </span>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label>Tecnologías (separadas por coma)</label>
-                <input [ngModel]="tecnologiasInput" (ngModelChange)="actualizarTecnologias($event)"
-                    placeholder="Ej: Angular, Firebase, Node.js">
-            </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo <span class="required">*</span></label>
+                        <select formControlName="tipo" aria-label="Tipo de proyecto">
+                            <option value="academico">Académico</option>
+                            <option value="laboral">Laboral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Participación <span class="required">*</span></label>
+                        <select formControlName="participacion" aria-label="Tipo de participación">
+                            <option value="Frontend">Frontend</option>
+                            <option value="Backend">Backend</option>
+                            <option value="Base de Datos">Base de Datos</option>
+                            <option value="Fullstack">Fullstack</option>
+                        </select>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label>URL Repositorio (GitHub)</label>
-                <input [(ngModel)]="proyectoForm.repoUrl" aria-label="URL del repositorio">
-            </div>
+                <div class="form-group">
+                    <label>Tecnologías <span class="required">*</span></label>
+                    <input formControlName="tecnologias"
+                           placeholder="Ej: Angular, Firebase, Node.js (separadas por coma)"
+                           [class.invalid]="mostrarErrorCampo('tecnologias')">
+                    <span class="error-message" *ngIf="mostrarErrorCampo('tecnologias')">
+                        {{ obtenerMensajeError('tecnologias') }}
+                    </span>
+                </div>
 
-            <div class="form-group">
-                <label>URL Demo (Despliegue)</label>
-                <input [(ngModel)]="proyectoForm.demoUrl" aria-label="URL de la demo">
-            </div>
+                <div class="form-group">
+                    <label>URL Repositorio (GitHub)</label>
+                    <input formControlName="repoUrl" 
+                           placeholder="https://github.com/usuario/proyecto"
+                           aria-label="URL del repositorio"
+                           [class.invalid]="mostrarErrorCampo('repoUrl')">
+                    <span class="error-message" *ngIf="mostrarErrorCampo('repoUrl')">
+                        {{ obtenerMensajeError('repoUrl') }}
+                    </span>
+                </div>
 
-            <div class="modal-actions">
-                <button 
-                    (click)="guardarProyecto()" 
-                    class="save-btn"
-                    [disabled]="guardandoProyecto"
-                    [class.disabled]="guardandoProyecto">
-                    {{ guardandoProyecto ? 'Guardando...' : 'Guardar' }}
-                </button>
-                <button (click)="cerrarModalProyecto()" class="cancel-btn" [disabled]="guardandoProyecto">Cancelar</button>
-            </div>
+                <div class="form-group">
+                    <label>URL Demo (Despliegue)</label>
+                    <input formControlName="demoUrl" 
+                           placeholder="https://miproyecto.vercel.app"
+                           aria-label="URL de la demo"
+                           [class.invalid]="mostrarErrorCampo('demoUrl')">
+                    <span class="error-message" *ngIf="mostrarErrorCampo('demoUrl')">
+                        {{ obtenerMensajeError('demoUrl') }}
+                    </span>
+                </div>
+
+                <div class="modal-actions">
+                    <button 
+                        type="button"
+                        (click)="guardarProyecto()" 
+                        class="save-btn"
+                        [disabled]="guardandoProyecto"
+                        [class.disabled]="guardandoProyecto">
+                        {{ guardandoProyecto ? 'Guardando...' : 'Guardar' }}
+                    </button>
+                    <button type="button" (click)="cerrarModalProyecto()" class="cancel-btn" [disabled]="guardandoProyecto">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
 

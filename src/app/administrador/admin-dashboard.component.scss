@@ -130,6 +130,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    font-size: 28px;
 
     svg {
       width: 30px;
@@ -140,24 +142,85 @@
       background-color: rgba(33, 150, 243, 0.1);
       color: #2196f3;
       border: 1px solid rgba(33, 150, 243, 0.2);
+
+      &:before {
+        content: "";
+        width: 24px;
+        height: 24px;
+        border: 3px solid currentColor;
+        border-radius: 50%;
+        position: absolute;
+        top: 8px;
+      }
+
+      &:after {
+        content: "";
+        width: 28px;
+        height: 16px;
+        border: 3px solid currentColor;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 8px;
+        border-top: none;
+      }
     }
 
     &.programmer {
       background-color: rgba(76, 175, 80, 0.1);
       color: #4caf50;
       border: 1px solid rgba(76, 175, 80, 0.2);
+
+      &:before {
+        content: "</>";
+        font-family: monospace;
+        font-weight: bold;
+        font-size: 22px;
+      }
     }
 
     &.user {
       background-color: rgba(255, 152, 0, 0.1);
       color: #ff9800;
       border: 1px solid rgba(255, 152, 0, 0.2);
+
+      &:before {
+        content: "";
+        width: 20px;
+        height: 20px;
+        border: 3px solid currentColor;
+        border-radius: 50%;
+        position: absolute;
+        top: 10px;
+      }
+
+      &:after {
+        content: "";
+        width: 24px;
+        height: 14px;
+        border: 3px solid currentColor;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 10px;
+        border-top: none;
+      }
     }
 
     &.total {
       background-color: rgba(255, 255, 255, 0.1);
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:before {
+        content: "";
+        width: 20px;
+        height: 3px;
+        background: currentColor;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 -8px 0 currentColor, 0 8px 0 currentColor;
+      }
     }
   }
 
@@ -176,6 +239,399 @@
       font-weight: 700;
       margin: 0;
     }
+  }
+}
+
+// Navegación de pestañas
+.view-tabs {
+  max-width: 1400px;
+  margin: 0 auto 30px;
+  padding: 0 20px;
+  display: flex;
+  gap: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+
+  .tab-btn {
+    padding: 15px 30px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: -2px;
+
+    &:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    &.active {
+      color: white;
+      border-bottom-color: var(--primary-color);
+    }
+  }
+}
+
+// Dashboard de gráficos
+.dashboard-section {
+  max-width: 1400px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+
+    .chart-card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 25px;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+
+      &.chart-wide {
+        grid-column: 1 / -1;
+      }
+
+      h3 {
+        color: white;
+        font-size: 18px;
+        margin: 0 0 20px 0;
+        font-weight: 600;
+      }
+
+      .chart-container {
+        position: relative;
+        height: 300px;
+        
+        canvas {
+          max-height: 100%;
+        }
+      }
+    }
+  }
+
+  .historial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    h3 {
+      color: white;
+      font-size: 22px;
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+
+  .historial-grid {
+    display: grid;
+    gap: 20px;
+
+    .asesoria-item {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.4);
+        border-color: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .asesoria-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .fecha {
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 14px;
+        }
+      }
+
+      .asesoria-body {
+        .participantes {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 15px;
+          margin-bottom: 15px;
+
+          .participante {
+            .label {
+              display: block;
+              color: rgba(255, 255, 255, 0.5);
+              font-size: 12px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: 5px;
+            }
+
+            .nombre {
+              color: white;
+              font-size: 15px;
+              font-weight: 500;
+            }
+          }
+        }
+
+        .motivo, .respuesta {
+          margin-top: 15px;
+          padding-top: 15px;
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+          .label {
+            display: block;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+          }
+
+          p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin: 0;
+          }
+        }
+      }
+    }
+
+    .empty-dashboard {
+      text-align: center;
+      padding: 100px 40px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      margin: 40px 0;
+
+      .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+
+        &:before {
+          content: "📊";
+        }
+      }
+
+      h3 {
+        color: white;
+        font-size: 22px;
+        margin: 0 0 10px 0;
+      }
+
+      p {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 16px;
+        margin: 0;
+      }
+    }
+
+    .empty-historial {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255, 255, 255, 0.4);
+      
+      p {
+        font-size: 16px;
+        margin: 0;
+      }
+    }
+
+    // Estilos específicos para proyectos
+    .proyecto-info {
+      margin-bottom: 15px;
+
+      .proyecto-titulo {
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+      }
+
+      .proyecto-descripcion {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.5;
+        margin: 0;
+      }
+    }
+
+    .tecnologias-proyecto {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+      .label {
+        display: block;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+      }
+
+      .tech-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .tech-tag {
+          background: rgba(76, 175, 80, 0.15);
+          color: #4caf50;
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 500;
+          border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+      }
+    }
+
+    .links-proyecto {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      .proyecto-link {
+        display: inline-block;
+        padding: 8px 16px;
+        background: rgba(0, 123, 255, 0.15);
+        color: #007bff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid rgba(0, 123, 255, 0.3);
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(0, 123, 255, 0.25);
+          border-color: rgba(0, 123, 255, 0.5);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.pendiente {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+  }
+
+  &.aprobada {
+    background: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+  }
+
+  &.rechazada {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+  }
+
+  &.cancelada {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.3);
+  }
+
+  &.completada, &.completado {
+    background: rgba(0, 123, 255, 0.15);
+    color: #007bff;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+  }
+
+  // Estados de proyectos
+  &.activo {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+  }
+
+  &.en-progreso {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+  }
+
+  &.sin-estado, &.sin-tipo {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.3);
+  }
+
+  // Badges de participación
+  &.frontend {
+    background: rgba(0, 123, 255, 0.15);
+    color: #007bff;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+  }
+
+  &.backend {
+    background: rgba(255, 87, 34, 0.15);
+    color: #ff5722;
+    border: 1px solid rgba(255, 87, 34, 0.3);
+  }
+
+  &.fullstack {
+    background: rgba(156, 39, 176, 0.15);
+    color: #9c27b0;
+    border: 1px solid rgba(156, 39, 176, 0.3);
+  }
+
+  &.database {
+    background: rgba(0, 188, 212, 0.15);
+    color: #00bcd4;
+    border: 1px solid rgba(0, 188, 212, 0.3);
+  }
+
+  // Tipo de proyecto
+  &.academico {
+    background: rgba(0, 123, 255, 0.15);
+    color: #007bff;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+  }
+
+  &.laboral {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
   }
 }
 

@@ -61,6 +61,16 @@
                                 {{ programador.descripcion }}
                             </p>
 
+                            <div class="modalidad-info" *ngIf="programador.disponibilidad?.modalidad">
+                                <span class="modalidad-badge"
+                                      [class.virtual]="programador.disponibilidad?.modalidad === 'virtual'"
+                                      [class.presencial]="programador.disponibilidad?.modalidad === 'presencial'"
+                                      [class.hibrido]="programador.disponibilidad?.modalidad === 'hibrido'">
+                                    {{ programador.disponibilidad?.modalidad === 'virtual' ? 'Virtual' : 
+                                       programador.disponibilidad?.modalidad === 'presencial' ? 'Presencial' : 'Híbrido' }}
+                                </span>
+                            </div>
+
                             <div class="tecnologias"
                                 *ngIf="programador.tecnologias && programador.tecnologias.length > 0">
                                 <span *ngFor="let tech of programador.tecnologias.slice(0, 4)" class="tech-badge">

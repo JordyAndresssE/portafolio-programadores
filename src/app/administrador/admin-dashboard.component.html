@@ -6,7 +6,6 @@
 
       <div class="brand">
         <div class="brand-icon">
-          ✔
         </div>
         <div>
           <h1>Panel de Administrador</h1>
@@ -15,7 +14,7 @@
       </div>
 
       <button (click)="cerrarSesion()" class="logout-btn">
-        ⬅ Cerrar Sesión
+        Cerrar Sesión
       </button>
 
     </div>
@@ -28,7 +27,7 @@
     <div class="stats-grid">
 
       <div class="stat-card">
-        <div class="stat-icon admin">👤</div>
+        <div class="stat-icon admin"></div>
         <div class="stat-info">
           <p class="stat-label">Administradores</p>
           <p class="stat-value">{{ (usuarios | filter:'administrador').length }}</p>
@@ -36,7 +35,7 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon programmer">💻</div>
+        <div class="stat-icon programmer"></div>
         <div class="stat-info">
           <p class="stat-label">Programadores</p>
           <p class="stat-value">{{ (usuarios | filter:'programador').length }}</p>
@@ -44,7 +43,7 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon user">🙂</div>
+        <div class="stat-icon user"></div>
         <div class="stat-info">
           <p class="stat-label">Usuarios</p>
           <p class="stat-value">{{ (usuarios | filter:'usuario').length }}</p>
@@ -52,7 +51,7 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon total">📊</div>
+        <div class="stat-icon total"></div>
         <div class="stat-info">
           <p class="stat-label">Total Usuarios</p>
           <p class="stat-value">{{ usuarios.length }}</p>
@@ -61,10 +60,227 @@
 
     </div>
 
+    <!-- NAVEGACIÓN DE VISTAS -->
+    <div class="view-tabs">
+      <button 
+        class="tab-btn" 
+        [class.active]="vistaActiva === 'usuarios'"
+        (click)="cambiarVista('usuarios')">
+        Gestión de Usuarios
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="vistaActiva === 'historial'"
+        (click)="cambiarVista('historial')">
+        Dashboard de Asesorías
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="vistaActiva === 'proyectos'"
+        (click)="cambiarVista('proyectos')">
+        Dashboard de Proyectos
+      </button>
+    </div>
+
+    <!-- SECCIÓN DE GRÁFICOS DE ASESORÍAS -->
+    <section class="dashboard-section" *ngIf="vistaActiva === 'historial'">
+      <div class="section-header">
+        <h2>Dashboard de Asesorías</h2>
+        <p class="subtitle">Análisis visual y estadísticas del sistema</p>
+      </div>
+
+      <!-- Mensaje cuando no hay asesorías -->
+      <div *ngIf="asesorias.length === 0" class="empty-dashboard">
+        <div class="empty-icon"></div>
+        <h3>No hay asesorías registradas</h3>
+        <p>Cuando se realicen asesorías, las estadísticas aparecerán aquí</p>
+      </div>
+      
+      <!-- Gráficos cuando hay datos -->
+      <div *ngIf="asesorias.length > 0" class="charts-grid">
+        <div class="chart-card">
+          <h3>Asesorías por Estado</h3>
+          <div class="chart-container">
+            <canvas #estadoChart></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Top 5 Programadores</h3>
+          <div class="chart-container">
+            <canvas #programadorChart></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card chart-wide">
+          <h3>Tendencia Últimos 6 Meses</h3>
+          <div class="chart-container">
+            <canvas #mensualChart></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORIAL DETALLADO -->
+      <div class="historial-header" *ngIf="asesorias.length > 0">
+        <h3>Historial Completo</h3>
+        <div class="search-box">
+          <input type="text" 
+                 placeholder="Buscar por programador, usuario, estado..."
+                 [(ngModel)]="filtroHistorial" 
+                 (input)="filtrarHistorial()">
+        </div>
+      </div>
+
+      <div class="historial-grid" *ngIf="asesorias.length > 0">
+        <div *ngFor="let asesoria of asesoriasFiltradasHistorial" class="asesoria-item">
+          <div class="asesoria-header">
+            <span [class]="'estado-badge ' + obtenerEstadoClase(asesoria.estado)">
+              {{ obtenerEstadoTexto(asesoria.estado) }}
+            </span>
+            <span class="fecha">{{ asesoria.fechaAsesoria }} - {{ asesoria.horaAsesoria }}</span>
+          </div>
+          
+          <div class="asesoria-body">
+            <div class="participantes">
+              <div class="participante">
+                <span class="label">Programador:</span>
+                <span class="nombre">{{ obtenerNombreUsuario(asesoria.idProgramador) }}</span>
+              </div>
+              <div class="participante">
+                <span class="label">Usuario:</span>
+                <span class="nombre">{{ obtenerNombreUsuario(asesoria.idUsuario) }}</span>
+              </div>
+            </div>
+            
+            <div class="motivo" *ngIf="asesoria.motivo">
+              <span class="label">Motivo:</span>
+              <p>{{ asesoria.motivo }}</p>
+            </div>
+            
+            <div class="respuesta" *ngIf="asesoria.mensajeRespuesta">
+              <span class="label">Respuesta:</span>
+              <p>{{ asesoria.mensajeRespuesta }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="asesoriasFiltradasHistorial.length === 0" class="empty-historial">
+          <p>No se encontraron asesorías</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE GRÁFICOS DE PROYECTOS -->
+    <section class="dashboard-section" *ngIf="vistaActiva === 'proyectos'">
+      <div class="section-header">
+        <h2>Dashboard de Proyectos</h2>
+        <p class="subtitle">Análisis visual y estadísticas de proyectos</p>
+      </div>
+
+      <!-- Mensaje cuando no hay proyectos -->
+      <div *ngIf="proyectos.length === 0" class="empty-dashboard">
+        <div class="empty-icon"></div>
+        <h3>No hay proyectos registrados</h3>
+        <p>Cuando se creen proyectos, las estadísticas aparecerán aquí</p>
+      </div>
+      
+      <!-- Gráficos cuando hay datos -->
+      <div *ngIf="proyectos.length > 0" class="charts-grid">
+        <div class="chart-card">
+          <h3>Proyectos por Tipo</h3>
+          <div class="chart-container">
+            <canvas #proyectoEstadoChart></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Top 5 Programadores</h3>
+          <div class="chart-container">
+            <canvas #proyectoUsuarioChart></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card chart-wide">
+          <h3>Distribución de Proyectos</h3>
+          <div class="chart-container">
+            <canvas #proyectoMensualChart></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- LISTADO DETALLADO DE PROYECTOS -->
+      <div class="historial-header" *ngIf="proyectos.length > 0">
+        <h3>Listado de Proyectos</h3>
+        <div class="search-box">
+          <input type="text" 
+                 placeholder="Buscar por programador, nombre, tipo..."
+                 [(ngModel)]="filtroProyectos" 
+                 (input)="filtrarProyectos()">
+        </div>
+      </div>
+
+      <div class="historial-grid" *ngIf="proyectos.length > 0">
+        <div *ngFor="let proyecto of proyectosFiltradasHistorial" class="asesoria-item">
+          <div class="asesoria-header">
+            <span [class]="'estado-badge ' + (proyecto.tipo.toLowerCase() || 'sin-tipo')">
+              {{ proyecto.tipo || 'Sin Tipo' }}
+            </span>
+            <span class="estado-badge" 
+                  [class.frontend]="proyecto.participacion === 'Frontend'"
+                  [class.backend]="proyecto.participacion === 'Backend'"
+                  [class.fullstack]="proyecto.participacion === 'Fullstack'"
+                  [class.database]="proyecto.participacion === 'Base de Datos'">
+              {{ proyecto.participacion }}
+            </span>
+          </div>
+          
+          <div class="asesoria-body">
+            <div class="proyecto-info">
+              <h4 class="proyecto-titulo">{{ proyecto.nombre }}</h4>
+              <p class="proyecto-descripcion" *ngIf="proyecto.descripcion">{{ proyecto.descripcion }}</p>
+            </div>
+
+            <div class="participantes">
+              <div class="participante">
+                <span class="label">Programador:</span>
+                <span class="nombre">{{ obtenerNombreUsuario(proyecto.idProgramador) }}</span>
+              </div>
+            </div>
+            
+            <div class="tecnologias-proyecto" *ngIf="proyecto.tecnologias && proyecto.tecnologias.length > 0">
+              <span class="label">Tecnologías:</span>
+              <div class="tech-tags">
+                <span *ngFor="let tech of proyecto.tecnologias" class="tech-tag">{{ tech }}</span>
+              </div>
+            </div>
+
+            <div class="links-proyecto" *ngIf="proyecto.repoUrl || proyecto.demoUrl">
+              <a *ngIf="proyecto.repoUrl" 
+                 [href]="proyecto.repoUrl" 
+                 target="_blank" 
+                 class="proyecto-link">
+                Repositorio
+              </a>
+              <a *ngIf="proyecto.demoUrl" 
+                 [href]="proyecto.demoUrl" 
+                 target="_blank" 
+                 class="proyecto-link">
+                Ver Demo
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="proyectosFiltradasHistorial.length === 0" class="empty-historial">
+          <p>No se encontraron proyectos</p>
+        </div>
+      </div>
+    </section>
+
     <!-- SECCIÓN DE REPORTES -->
     <section class="reports-section">
       <div class="section-header">
-        <h2>📊 Reportes Administrativos</h2>
+        <h2>Reportes Administrativos</h2>
       </div>
       
       <div class="reports-actions">
@@ -73,7 +289,7 @@
           (click)="descargarReporteAsesoriasPDF()"
           [disabled]="generandoReporte"
           [class.disabled]="generandoReporte">
-          {{ generandoReporte ? '⏳ Generando...' : '📄 Descargar Reporte Asesorías (PDF)' }}
+          {{ generandoReporte ? '⏳ Generando...' : 'Descargar Reporte Asesorías (PDF)' }}
         </button>
         
         <button 
@@ -81,13 +297,13 @@
           (click)="descargarReporteProyectosExcel()"
           [disabled]="generandoReporte"
           [class.disabled]="generandoReporte">
-          {{ generandoReporte ? '⏳ Generando...' : '📊 Descargar Reporte Proyectos (Excel)' }}
+          {{ generandoReporte ? '⏳ Generando...' : 'Descargar Reporte Proyectos (Excel)' }}
         </button>
       </div>
     </section>
 
     <!-- TABLA DE USUARIOS -->
-    <section class="users-section">
+    <section class="users-section" *ngIf="vistaActiva === 'usuarios'">
 
       <div class="section-header">
         <h2>Gestión de Usuarios</h2>

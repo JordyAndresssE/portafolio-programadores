@@ -16,6 +16,9 @@ export interface Usuario {
     sitioWeb?: string;
   };
   disponibilidad?: {
+    // Modalidad de asesorías
+    modalidad?: 'presencial' | 'virtual' | 'hibrido';
+    
     // Opción 1: Horario general para todos los días
     dias?: string[]; // Ej: ['Lunes', 'Martes'] 
     horaInicio?: string; // Ej: '09:00' 

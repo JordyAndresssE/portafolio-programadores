@@ -25,6 +25,9 @@ export function convertirUsuarioABackend(usuario: Usuario): any {
         twitter: usuario.redesSociales?.twitter || '',
         sitioWeb: usuario.redesSociales?.sitioWeb || '',
         
+        // CONVERTIR MODALIDAD
+        modalidad: usuario.disponibilidad?.modalidad || 'virtual',
+        
         // CONVERTIR HORARIOS: Objeto → Campos planos por día
         horarioLunes: usuario.disponibilidad?.horariosPorDia?.['Lunes']?.activo
             ? `${usuario.disponibilidad.horariosPorDia['Lunes'].horaInicio}-${usuario.disponibilidad.horariosPorDia['Lunes'].horaFin}`
@@ -82,6 +85,7 @@ export function convertirUsuarioDesdeBackend(usuarioBackend: any): Usuario {
         
         // CONVERTIR HORARIOS: Campos planos → Objeto por día
         disponibilidad: {
+            modalidad: usuarioBackend.modalidad || 'virtual',
             horariosPorDia: {
                 'Lunes': parsearHorario(usuarioBackend.horarioLunes),
                 'Martes': parsearHorario(usuarioBackend.horarioMartes),

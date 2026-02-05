@@ -292,6 +292,40 @@
             overflow: hidden;
         }
 
+        .modalidad-info {
+            margin-bottom: 1rem;
+
+            .modalidad-badge {
+                display: inline-block;
+                padding: 0.4rem 1rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                border: 1.5px solid;
+                transition: all 0.3s ease;
+
+                &.virtual {
+                    background: rgba(0, 123, 255, 0.1);
+                    border-color: rgba(0, 123, 255, 0.4);
+                    color: #4da3ff;
+                }
+
+                &.presencial {
+                    background: rgba(40, 167, 69, 0.1);
+                    border-color: rgba(40, 167, 69, 0.4);
+                    color: #5cd67f;
+                }
+
+                &.hibrido {
+                    background: rgba(255, 193, 7, 0.1);
+                    border-color: rgba(255, 193, 7, 0.4);
+                    color: #ffc107;
+                }
+            }
+        }
+
         .tecnologias {
             display: flex;
             flex-wrap: wrap;
