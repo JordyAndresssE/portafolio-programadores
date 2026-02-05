@@ -196,22 +196,44 @@ export class PanelProgramadorComponent implements OnInit {
         
         // Enviar notificación automática con FastAPI
         if (this.usuario) {
-          this.notificacionesService.notificarAsesoria({
-            id_asesoria: asesoria.id!,
-            email_programador: this.usuario.email,
-            nombre_programador: this.usuario.nombre,
-            email_usuario: asesoria.emailUsuario,
-            nombre_usuario: asesoria.nombreUsuario,
-            fecha_asesoria: asesoria.fechaAsesoria,
-            hora_asesoria: asesoria.horaAsesoria,
-            motivo: asesoria.motivo,
-            estado: estado,
-            mensaje_respuesta: mensaje,
-            tipo_notificacion: estado === 'aprobada' && this.usuario.telefono ? 'ambos' : 'email',
-            telefono_programador: this.usuario.telefono // Campo para WhatsApp
-          }).subscribe({
-            next: () => console.log('✅ Notificación enviada (Email + WhatsApp)'),
-            error: (err) => console.error('❌ Error al enviar notificación:', err)
+          // Obtener teléfono del usuario que solicitó la asesoría
+          this.usuariosBackend.obtenerUsuarioPorId(asesoria.idUsuario).subscribe({
+            next: (usuarioSolicitante) => {
+              this.notificacionesService.notificarAsesoria({
+                id_asesoria: asesoria.id!,
+                email_programador: this.usuario!.email,
+                nombre_programador: this.usuario!.nombre,
+                email_usuario: asesoria.emailUsuario,
+                nombre_usuario: asesoria.nombreUsuario,
+                fecha_asesoria: asesoria.fechaAsesoria,
+                hora_asesoria: asesoria.horaAsesoria,
+                motivo: asesoria.motivo,
+                estado: estado,
+                mensaje_respuesta: mensaje,
+                tipo_notificacion: usuarioSolicitante.telefono ? 'ambos' : 'email',
+                telefono_usuario: usuarioSolicitante.telefono // 📱 Teléfono del USUARIO que solicitó
+              }).subscribe({
+                next: () => console.log('✅ Notificación enviada al usuario (Email + WhatsApp)'),
+                error: (err) => console.error('❌ Error al enviar notificación:', err)
+              });
+            },
+            error: (err) => {
+              console.error('❌ Error al obtener usuario:', err);
+              // Enviar solo email si falla obtener teléfono
+              this.notificacionesService.notificarAsesoria({
+                id_asesoria: asesoria.id!,
+                email_programador: this.usuario!.email,
+                nombre_programador: this.usuario!.nombre,
+                email_usuario: asesoria.emailUsuario,
+                nombre_usuario: asesoria.nombreUsuario,
+                fecha_asesoria: asesoria.fechaAsesoria,
+                hora_asesoria: asesoria.horaAsesoria,
+                motivo: asesoria.motivo,
+                estado: estado,
+                mensaje_respuesta: mensaje,
+                tipo_notificacion: 'email'
+              }).subscribe();
+            }
           });
         }
         
