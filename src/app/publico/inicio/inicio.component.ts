@@ -37,10 +37,10 @@ export class InicioComponent implements OnInit {
         this.programadores = programadores.map(prog => convertirUsuario(prog));
         this.programadoresFiltrados = this.programadores;
         this.cargando = false;
-        console.log('✅ Programadores cargados desde backend:', this.programadores);
+        console.log('Programadores cargados:', this.programadores);
       },
       error: (err) => {
-        console.error('❌ Error al cargar programadores:', err);
+        console.error('Error al cargar programadores:', err);
         this.error = 'Error al cargar los programadores. Verifica que el backend esté corriendo.';
         this.cargando = false;
       }

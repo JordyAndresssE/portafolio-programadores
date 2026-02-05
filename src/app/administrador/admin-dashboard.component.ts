@@ -42,12 +42,12 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
   asesorias: Asesoria[] = [];
   asesoriasFiltradasHistorial: Asesoria[] = [];
   filtroHistorial = '';
-  
+
   // Datos de proyectos
   proyectos: Proyecto[] = [];
   proyectosFiltradasHistorial: Proyecto[] = [];
   filtroProyectos = '';
-  
+
   vistaActiva: 'usuarios' | 'historial' | 'proyectos' = 'usuarios';
 
   // Charts
@@ -161,7 +161,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
     this.proyectosFiltradasHistorial = this.proyectos.filter(proyecto => {
       const programador = this.usuarios.find(u => u.uid === proyecto.idProgramador);
-      
+
       return (
         programador?.nombre.toLowerCase().includes(termino) ||
         proyecto.nombre?.toLowerCase().includes(termino) ||
@@ -294,11 +294,11 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
     this.guardando = true;
     try {
-      // ✅ CONVERTIR USUARIO AL FORMATO DEL BACKEND
+      // Convertir usuario al formato del backend
       const usuarioDTO = convertirUsuarioABackend(this.usuarioSeleccionado);
-      
-      console.log('📤 Enviando usuario al backend:', usuarioDTO);
-      
+
+      console.log('Enviando usuario al backend:', usuarioDTO);
+
       await this.usuariosBackend.actualizarUsuario(
         this.usuarioSeleccionado.uid,
         usuarioDTO
@@ -329,10 +329,10 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
   descargarReporteAsesoriasPDF() {
     if (this.generandoReporte) return;
-    
+
     this.generandoReporte = true;
     this.notificacionService.mostrarInfo('Generando reporte PDF...');
-    
+
     this.reportesService.descargarPDFAsesorias().subscribe({
       next: (blob) => {
         const fecha = new Date().toISOString().split('T')[0];
@@ -350,10 +350,10 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
   descargarReporteProyectosExcel() {
     if (this.generandoReporte) return;
-    
+
     this.generandoReporte = true;
     this.notificacionService.mostrarInfo('Generando reporte Excel...');
-    
+
     this.reportesService.descargarExcelProyectos().subscribe({
       next: (blob) => {
         const fecha = new Date().toISOString().split('T')[0];
@@ -379,7 +379,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     this.asesoriasFiltradasHistorial = this.asesorias.filter(asesoria => {
       const programador = this.usuarios.find(u => u.uid === asesoria.idProgramador);
       const usuario = this.usuarios.find(u => u.uid === asesoria.idUsuario);
-      
+
       return (
         programador?.nombre.toLowerCase().includes(termino) ||
         usuario?.nombre.toLowerCase().includes(termino) ||
@@ -428,15 +428,15 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     }
 
     // Validar que los ViewChild estén disponibles
-    if (!this.estadoChartRef?.nativeElement || 
-        !this.programadorChartRef?.nativeElement || 
-        !this.mensualChartRef?.nativeElement) {
+    if (!this.estadoChartRef?.nativeElement ||
+      !this.programadorChartRef?.nativeElement ||
+      !this.mensualChartRef?.nativeElement) {
       console.log('Canvas elements no disponibles');
       return;
     }
 
     console.log('Creando gráficos con', this.asesorias.length, 'asesorías');
-    
+
     try {
       this.crearGraficoEstados();
       this.crearGraficoProgramadores();
@@ -611,15 +611,15 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    if (!this.proyectoEstadoChartRef?.nativeElement || 
-        !this.proyectoUsuarioChartRef?.nativeElement || 
-        !this.proyectoMensualChartRef?.nativeElement) {
+    if (!this.proyectoEstadoChartRef?.nativeElement ||
+      !this.proyectoUsuarioChartRef?.nativeElement ||
+      !this.proyectoMensualChartRef?.nativeElement) {
       console.log('Canvas de proyectos no disponibles');
       return;
     }
 
     console.log('Creando gráficos de proyectos con', this.proyectos.length, 'proyectos');
-    
+
     try {
       this.crearGraficoProyectoEstados();
       this.crearGraficoProyectoUsuarios();

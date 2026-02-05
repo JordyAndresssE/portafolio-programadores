@@ -122,7 +122,7 @@ export class PanelProgramadorComponent implements OnInit {
       this.cargandoAsesorias = true;
       this.asesoriasBackend.obtenerAsesoriasPorProgramador(this.usuario.uid).subscribe({
         next: (a) => {
-          console.log('✅ Asesorías recibidas:', a);
+          console.log('Asesorias recibidas:', a);
           console.log('Cantidad de asesorías:', a.length);
           if (a.length > 0) {
             console.log('Primera asesoría:', a[0]);
@@ -131,7 +131,7 @@ export class PanelProgramadorComponent implements OnInit {
           this.cargandoAsesorias = false;
         },
         error: (error) => {
-          console.error('❌ Error al cargar asesorías:', error);
+          console.error('Error al cargar asesorias:', error);
           this.cargandoAsesorias = false;
         }
       });
@@ -148,22 +148,22 @@ export class PanelProgramadorComponent implements OnInit {
     if (timestamp instanceof Date && !isNaN(timestamp.getTime())) {
       return timestamp;
     }
-    
+
     // Si es un Timestamp de Firebase
     if (timestamp && typeof timestamp.toDate === 'function') {
       return timestamp.toDate();
     }
-    
+
     // Si es null o undefined, retornar fecha actual
     if (!timestamp) {
       return new Date();
     }
-    
+
     // Si es un número (milisegundos desde epoch)
     if (typeof timestamp === 'number') {
       return new Date(timestamp);
     }
-    
+
     // Si es un string, intentar parsearlo
     if (typeof timestamp === 'string') {
       // Remover [UTC] o cualquier zona horaria entre corchetes
@@ -173,14 +173,14 @@ export class PanelProgramadorComponent implements OnInit {
         return parsed;
       }
     }
-    
+
     // Si es un array de Java LocalDateTime [year, month, day, hour, minute, second, nano]
     if (Array.isArray(timestamp) && timestamp.length >= 3) {
       const [year, month, day, hour = 0, minute = 0, second = 0] = timestamp;
       return new Date(year, month - 1, day, hour, minute, second);
     }
-    
-    console.error('❌ No se pudo convertir timestamp:', timestamp);
+
+    console.error('No se pudo convertir timestamp:', timestamp);
     return new Date(); // Fallback
   }
 
@@ -194,10 +194,10 @@ export class PanelProgramadorComponent implements OnInit {
   obtenerFechaFormateada(fecha: any): string {
     try {
       const date = this.convertirTimestamp(fecha);
-      return date.toLocaleDateString('es-ES', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
       });
     } catch (error) {
       console.error('Error al formatear fecha:', error);
@@ -213,14 +213,14 @@ export class PanelProgramadorComponent implements OnInit {
     if (mensaje !== null) {
       try {
         this.respondiendoAsesoria = true;
-        
+
         // Actualizar estado en Jakarta
         if (estado === 'aprobada') {
           await this.asesoriasBackend.aprobarAsesoria(asesoria.id!, mensaje).toPromise();
         } else {
           await this.asesoriasBackend.rechazarAsesoria(asesoria.id!, mensaje).toPromise();
         }
-        
+
         // Enviar notificación automática con FastAPI
         if (this.usuario) {
           this.notificacionesService.notificarAsesoria({
@@ -235,13 +235,13 @@ export class PanelProgramadorComponent implements OnInit {
             estado: estado,
             mensaje_respuesta: mensaje,
             tipo_notificacion: 'ambos',
-            telefono_usuario: this.usuario.telefono // 📱 Cambió de telefono_programador a telefono_usuario
+            telefono_usuario: this.usuario.telefono
           }).subscribe({
-            next: () => console.log('✅ Notificación enviada (Email + WhatsApp)'),
-            error: (err) => console.error('❌ Error al enviar notificación:', err)
+            next: () => console.log('Notificacion enviada'),
+            error: (err) => console.error('Error al enviar notificacion:', err)
           });
         }
-        
+
         this.cargarAsesorias();
         alert(`Solicitud ${estado} correctamente. Notificación enviada al usuario.`);
       } catch (error) {
@@ -256,7 +256,7 @@ export class PanelProgramadorComponent implements OnInit {
   // --- Lógica de Perfil ---
   validarPerfil(): string | null {
     if (!this.perfilForm) return 'No hay datos de perfil';
-    
+
     if (!this.perfilForm.nombre?.trim()) {
       return 'El nombre completo es obligatorio';
     }
@@ -264,7 +264,7 @@ export class PanelProgramadorComponent implements OnInit {
     if (this.perfilForm.nombre.trim().length < 3) {
       return 'El nombre debe tener al menos 3 caracteres';
     }
-    
+
     if (!this.perfilForm.especialidad?.trim()) {
       return 'La especialidad es obligatoria';
     }
@@ -305,7 +305,7 @@ export class PanelProgramadorComponent implements OnInit {
         return 'La URL del sitio web debe ser válida';
       }
     }
-    
+
     return null;
   }
 
@@ -316,7 +316,7 @@ export class PanelProgramadorComponent implements OnInit {
 
     const errorValidacion = this.validarPerfil();
     if (errorValidacion) {
-      alert('❌ Error de validación:\n\n' + errorValidacion);
+      alert('Error de validacion: ' + errorValidacion);
       return;
     }
 
@@ -324,18 +324,18 @@ export class PanelProgramadorComponent implements OnInit {
 
     try {
       this.guardandoPerfil = true;
-      
-      // ✅ Usar convertidor DTO para transformar datos al formato del backend
+
+      // Usar convertidor DTO para transformar datos al formato del backend
       const usuarioDTO = convertirUsuarioABackend(this.perfilForm);
-      
-      console.log('📤 Enviando perfil al backend:', usuarioDTO);
-      
+
+      console.log('Enviando perfil al backend:', usuarioDTO);
+
       await this.usuariosBackend.actualizarUsuario(this.perfilForm.uid, usuarioDTO).toPromise();
-      alert('✅ Perfil actualizado correctamente');
+      alert('Perfil actualizado correctamente');
       this.perfilFormSubmitted = false;
     } catch (error) {
       console.error('Error al actualizar perfil:', error);
-      alert('❌ Error al actualizar perfil');
+      alert('Error al actualizar perfil');
     } finally {
       this.guardandoPerfil = false;
     }
@@ -363,11 +363,11 @@ export class PanelProgramadorComponent implements OnInit {
     this.proyectoEditando = proyecto;
     this.proyectoForm = { ...proyecto };
     this.proyectoFormSubmitted = false;
-    
+
     // Asegurar que tecnologias sea array antes de join
     const techs = Array.isArray(proyecto.tecnologias) ? proyecto.tecnologias : [];
     this.tecnologiasInput = techs.join(', ');
-    
+
     // Cargar valores en el FormGroup
     this.proyectoFormGroup.patchValue({
       nombre: proyecto.nombre || '',
@@ -378,7 +378,7 @@ export class PanelProgramadorComponent implements OnInit {
       repoUrl: proyecto.repoUrl || '',
       demoUrl: proyecto.demoUrl || ''
     });
-    
+
     this.mostrarModalProyecto = true;
   }
 
@@ -397,15 +397,15 @@ export class PanelProgramadorComponent implements OnInit {
     if (!this.proyectoForm.nombre?.trim()) {
       return 'El nombre del proyecto es obligatorio';
     }
-    
+
     if (!this.proyectoForm.descripcion?.trim()) {
       return 'La descripción es obligatoria';
     }
-    
+
     if (!this.proyectoForm.tecnologias || this.proyectoForm.tecnologias.length === 0) {
       return 'Debes agregar al menos una tecnología';
     }
-    
+
     return null;
   }
 
@@ -424,10 +424,10 @@ export class PanelProgramadorComponent implements OnInit {
 
     try {
       this.guardandoProyecto = true;
-      
+
       // Obtener valores del formulario
       const formValues = this.proyectoFormGroup.value;
-      
+
       // Transformar datos para que coincidan con el backend
       const datosProyecto: any = {
         nombre: formValues.nombre,

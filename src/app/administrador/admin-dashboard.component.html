@@ -62,22 +62,13 @@
 
     <!-- NAVEGACIÓN DE VISTAS -->
     <div class="view-tabs">
-      <button 
-        class="tab-btn" 
-        [class.active]="vistaActiva === 'usuarios'"
-        (click)="cambiarVista('usuarios')">
+      <button class="tab-btn" [class.active]="vistaActiva === 'usuarios'" (click)="cambiarVista('usuarios')">
         Gestión de Usuarios
       </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="vistaActiva === 'historial'"
-        (click)="cambiarVista('historial')">
+      <button class="tab-btn" [class.active]="vistaActiva === 'historial'" (click)="cambiarVista('historial')">
         Dashboard de Asesorías
       </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="vistaActiva === 'proyectos'"
-        (click)="cambiarVista('proyectos')">
+      <button class="tab-btn" [class.active]="vistaActiva === 'proyectos'" (click)="cambiarVista('proyectos')">
         Dashboard de Proyectos
       </button>
     </div>
@@ -95,7 +86,7 @@
         <h3>No hay asesorías registradas</h3>
         <p>Cuando se realicen asesorías, las estadísticas aparecerán aquí</p>
       </div>
-      
+
       <!-- Gráficos cuando hay datos -->
       <div *ngIf="asesorias.length > 0" class="charts-grid">
         <div class="chart-card">
@@ -104,14 +95,14 @@
             <canvas #estadoChart></canvas>
           </div>
         </div>
-        
+
         <div class="chart-card">
           <h3>Top 5 Programadores</h3>
           <div class="chart-container">
             <canvas #programadorChart></canvas>
           </div>
         </div>
-        
+
         <div class="chart-card chart-wide">
           <h3>Tendencia Últimos 6 Meses</h3>
           <div class="chart-container">
@@ -124,10 +115,8 @@
       <div class="historial-header" *ngIf="asesorias.length > 0">
         <h3>Historial Completo</h3>
         <div class="search-box">
-          <input type="text" 
-                 placeholder="Buscar por programador, usuario, estado..."
-                 [(ngModel)]="filtroHistorial" 
-                 (input)="filtrarHistorial()">
+          <input type="text" placeholder="Buscar por programador, usuario, estado..." [(ngModel)]="filtroHistorial"
+            (input)="filtrarHistorial()">
         </div>
       </div>
 
@@ -139,7 +128,7 @@
             </span>
             <span class="fecha">{{ asesoria.fechaAsesoria }} - {{ asesoria.horaAsesoria }}</span>
           </div>
-          
+
           <div class="asesoria-body">
             <div class="participantes">
               <div class="participante">
@@ -151,19 +140,19 @@
                 <span class="nombre">{{ obtenerNombreUsuario(asesoria.idUsuario) }}</span>
               </div>
             </div>
-            
+
             <div class="motivo" *ngIf="asesoria.motivo">
               <span class="label">Motivo:</span>
               <p>{{ asesoria.motivo }}</p>
             </div>
-            
+
             <div class="respuesta" *ngIf="asesoria.mensajeRespuesta">
               <span class="label">Respuesta:</span>
               <p>{{ asesoria.mensajeRespuesta }}</p>
             </div>
           </div>
         </div>
-        
+
         <div *ngIf="asesoriasFiltradasHistorial.length === 0" class="empty-historial">
           <p>No se encontraron asesorías</p>
         </div>
@@ -183,7 +172,7 @@
         <h3>No hay proyectos registrados</h3>
         <p>Cuando se creen proyectos, las estadísticas aparecerán aquí</p>
       </div>
-      
+
       <!-- Gráficos cuando hay datos -->
       <div *ngIf="proyectos.length > 0" class="charts-grid">
         <div class="chart-card">
@@ -192,14 +181,14 @@
             <canvas #proyectoEstadoChart></canvas>
           </div>
         </div>
-        
+
         <div class="chart-card">
           <h3>Top 5 Programadores</h3>
           <div class="chart-container">
             <canvas #proyectoUsuarioChart></canvas>
           </div>
         </div>
-        
+
         <div class="chart-card chart-wide">
           <h3>Distribución de Proyectos</h3>
           <div class="chart-container">
@@ -212,10 +201,8 @@
       <div class="historial-header" *ngIf="proyectos.length > 0">
         <h3>Listado de Proyectos</h3>
         <div class="search-box">
-          <input type="text" 
-                 placeholder="Buscar por programador, nombre, tipo..."
-                 [(ngModel)]="filtroProyectos" 
-                 (input)="filtrarProyectos()">
+          <input type="text" placeholder="Buscar por programador, nombre, tipo..." [(ngModel)]="filtroProyectos"
+            (input)="filtrarProyectos()">
         </div>
       </div>
 
@@ -225,15 +212,14 @@
             <span [class]="'estado-badge ' + (proyecto.tipo.toLowerCase() || 'sin-tipo')">
               {{ proyecto.tipo || 'Sin Tipo' }}
             </span>
-            <span class="estado-badge" 
-                  [class.frontend]="proyecto.participacion === 'Frontend'"
-                  [class.backend]="proyecto.participacion === 'Backend'"
-                  [class.fullstack]="proyecto.participacion === 'Fullstack'"
-                  [class.database]="proyecto.participacion === 'Base de Datos'">
+            <span class="estado-badge" [class.frontend]="proyecto.participacion === 'Frontend'"
+              [class.backend]="proyecto.participacion === 'Backend'"
+              [class.fullstack]="proyecto.participacion === 'Fullstack'"
+              [class.database]="proyecto.participacion === 'Base de Datos'">
               {{ proyecto.participacion }}
             </span>
           </div>
-          
+
           <div class="asesoria-body">
             <div class="proyecto-info">
               <h4 class="proyecto-titulo">{{ proyecto.nombre }}</h4>
@@ -246,7 +232,7 @@
                 <span class="nombre">{{ obtenerNombreUsuario(proyecto.idProgramador) }}</span>
               </div>
             </div>
-            
+
             <div class="tecnologias-proyecto" *ngIf="proyecto.tecnologias && proyecto.tecnologias.length > 0">
               <span class="label">Tecnologías:</span>
               <div class="tech-tags">
@@ -255,22 +241,16 @@
             </div>
 
             <div class="links-proyecto" *ngIf="proyecto.repoUrl || proyecto.demoUrl">
-              <a *ngIf="proyecto.repoUrl" 
-                 [href]="proyecto.repoUrl" 
-                 target="_blank" 
-                 class="proyecto-link">
+              <a *ngIf="proyecto.repoUrl" [href]="proyecto.repoUrl" target="_blank" class="proyecto-link">
                 Repositorio
               </a>
-              <a *ngIf="proyecto.demoUrl" 
-                 [href]="proyecto.demoUrl" 
-                 target="_blank" 
-                 class="proyecto-link">
+              <a *ngIf="proyecto.demoUrl" [href]="proyecto.demoUrl" target="_blank" class="proyecto-link">
                 Ver Demo
               </a>
             </div>
           </div>
         </div>
-        
+
         <div *ngIf="proyectosFiltradasHistorial.length === 0" class="empty-historial">
           <p>No se encontraron proyectos</p>
         </div>
@@ -282,22 +262,16 @@
       <div class="section-header">
         <h2>Reportes Administrativos</h2>
       </div>
-      
+
       <div class="reports-actions">
-        <button 
-          class="btn btn-report" 
-          (click)="descargarReporteAsesoriasPDF()"
-          [disabled]="generandoReporte"
+        <button class="btn btn-report" (click)="descargarReporteAsesoriasPDF()" [disabled]="generandoReporte"
           [class.disabled]="generandoReporte">
-          {{ generandoReporte ? '⏳ Generando...' : 'Descargar Reporte Asesorías (PDF)' }}
+          {{ generandoReporte ? 'Generando...' : 'Descargar Reporte Asesorias (PDF)' }}
         </button>
-        
-        <button 
-          class="btn btn-report" 
-          (click)="descargarReporteProyectosExcel()"
-          [disabled]="generandoReporte"
+
+        <button class="btn btn-report" (click)="descargarReporteProyectosExcel()" [disabled]="generandoReporte"
           [class.disabled]="generandoReporte">
-          {{ generandoReporte ? '⏳ Generando...' : 'Descargar Reporte Proyectos (Excel)' }}
+          {{ generandoReporte ? 'Generando...' : 'Descargar Reporte Proyectos (Excel)' }}
         </button>
       </div>
     </section>
@@ -348,7 +322,7 @@
               </td>
 
               <td>
-                <button class="edit-btn" (click)="editarUsuario(usuario)">✏ Editar</button>
+                <button class="edit-btn" (click)="editarUsuario(usuario)">Editar</button>
               </td>
 
             </tr>
@@ -356,7 +330,7 @@
         </table>
 
         <div *ngIf="usuariosFiltrados.length === 0" class="empty-state">
-          ⚠ No se encontraron usuarios
+          No se encontraron usuarios
         </div>
 
       </div>
@@ -407,7 +381,8 @@
 
           <div class="form-group">
             <label>Descripción</label>
-            <textarea [(ngModel)]="usuarioSeleccionado.descripcion" rows="3" class="form-control" aria-label="Descripción del usuario"></textarea>
+            <textarea [(ngModel)]="usuarioSeleccionado.descripcion" rows="3" class="form-control"
+              aria-label="Descripción del usuario"></textarea>
           </div>
 
           <div class="form-group">
@@ -440,8 +415,8 @@
                     <span class="separator">→</span>
                     <div class="input-group">
                       <label>Hasta</label>
-                      <input type="time" [value]="getHoraFin(dia)" (change)="setHoraFin(dia, $event)"
-                        class="time-input" [aria-label]="'Hora de fin para ' + dia">
+                      <input type="time" [value]="getHoraFin(dia)" (change)="setHoraFin(dia, $event)" class="time-input"
+                        [aria-label]="'Hora de fin para ' + dia">
                     </div>
                   </div>
                 </div>
@@ -455,11 +430,7 @@
 
       <div class="modal-footer">
         <button class="btn btn-cancel" (click)="cancelarEdicion()" [disabled]="guardando">Cancelar</button>
-        <button 
-          class="btn btn-save" 
-          (click)="guardarCambios()" 
-          [disabled]="guardando"
-          [class.disabled]="guardando">
+        <button class="btn btn-save" (click)="guardarCambios()" [disabled]="guardando" [class.disabled]="guardando">
           {{ guardando ? 'Guardando...' : 'Guardar' }}
         </button>
       </div>

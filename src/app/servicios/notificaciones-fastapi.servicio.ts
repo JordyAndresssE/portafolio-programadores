@@ -51,7 +51,7 @@ export class NotificacionesFastAPIServicio {
         estado: 'pendiente' | 'aprobada' | 'rechazada' | 'cancelada';
         mensaje_respuesta?: string;
         tipo_notificacion?: 'email' | 'whatsapp' | 'ambos';
-        telefono_usuario?: string; // 📱 Teléfono del USUARIO que recibe la notificación
+        telefono_usuario?: string;
     }): Observable<any> {
         return this.http.post(`${this.apiUrl}/asesoria`, data);
     }

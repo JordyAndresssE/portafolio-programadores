@@ -157,22 +157,22 @@ export class PanelUsuarioComponent implements OnInit {
         if (timestamp instanceof Date && !isNaN(timestamp.getTime())) {
             return timestamp;
         }
-        
+
         // Si es un Timestamp de Firebase
         if (timestamp && typeof timestamp.toDate === 'function') {
             return timestamp.toDate();
         }
-        
+
         // Si es null o undefined, retornar fecha actual
         if (!timestamp) {
             return new Date();
         }
-        
+
         // Si es un número (milisegundos desde epoch)
         if (typeof timestamp === 'number') {
             return new Date(timestamp);
         }
-        
+
         // Si es un string, intentar parsearlo
         if (typeof timestamp === 'string') {
             // Remover [UTC] o cualquier zona horaria entre corchetes
@@ -182,14 +182,14 @@ export class PanelUsuarioComponent implements OnInit {
                 return parsed;
             }
         }
-        
+
         // Si es un array de Java LocalDateTime [year, month, day, hour, minute, second, nano]
         if (Array.isArray(timestamp) && timestamp.length >= 3) {
             const [year, month, day, hour = 0, minute = 0, second = 0] = timestamp;
             return new Date(year, month - 1, day, hour, minute, second);
         }
-        
-        console.error('❌ No se pudo convertir timestamp:', timestamp);
+
+        console.error('No se pudo convertir timestamp:', timestamp);
         return new Date(); // Fallback
     }
 
@@ -197,9 +197,9 @@ export class PanelUsuarioComponent implements OnInit {
     obtenerFechaFormateada(fecha: any): string {
         try {
             const date = this.convertirTimestamp(fecha);
-            return date.toLocaleDateString('es-ES', { 
-                year: 'numeric', 
-                month: '2-digit', 
+            return date.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
                 day: '2-digit',
                 hour: '2-digit',
                 minute: '2-digit'

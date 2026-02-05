@@ -71,7 +71,7 @@ export class AutenticacionServicio {
               this.crearNuevoUsuario(firebaseUser, resolve);
             } else {
               // Usuario existente - redirigir según rol
-              console.log('✅ Usuario existente autenticado:', usuarioBackend);
+              console.log('Usuario existente autenticado:', usuarioBackend);
               this.usuarioSubject.next(convertirUsuario(usuarioBackend));
               this.redirigirSegunRol(usuarioBackend);
               resolve(false);
@@ -80,10 +80,10 @@ export class AutenticacionServicio {
           error: (error) => {
             // Si es 404, significa que el usuario no existe - crearlo
             if (error.status === 404) {
-              console.log('📝 Usuario no encontrado, creando nuevo usuario...');
+              console.log('Usuario no encontrado, creando nuevo...');
               this.crearNuevoUsuario(firebaseUser, resolve);
             } else {
-              console.error('❌ Error al verificar usuario:', error);
+              console.error('Error al verificar usuario:', error);
               resolve(false);
             }
           }
@@ -124,13 +124,13 @@ export class AutenticacionServicio {
 
     this.usuariosBackend.crearUsuario(nuevoUsuario).subscribe({
       next: (usuarioCreado) => {
-        console.log('✅ Nuevo usuario creado en backend:', usuarioCreado);
+        console.log('Nuevo usuario creado en backend:', usuarioCreado);
         this.usuarioSubject.next(nuevoUsuario);
         this.redirigirSegunRol(nuevoUsuario);
         resolve(true);
       },
       error: (error) => {
-        console.error('❌ Error al crear usuario en backend:', error);
+        console.error('Error al crear usuario en backend:', error);
         // Aún así redirigir como usuario temporal
         this.usuarioSubject.next(nuevoUsuario);
         this.redirigirSegunRol(nuevoUsuario);
@@ -144,7 +144,7 @@ export class AutenticacionServicio {
 
     // Limpiar espacios del rol
     const rol = usuario.rol?.trim() || '';
-    console.log('🔀 Redirigiendo con rol:', rol);
+    console.log('Redirigiendo con rol:', rol);
 
     this.ngZone.run(() => {
       switch (rol) {
@@ -158,7 +158,7 @@ export class AutenticacionServicio {
           this.router.navigate(['/usuario']);
           break;
         default:
-          console.warn('⚠️ Rol no reconocido:', rol);
+          console.warn('Rol no reconocido:', rol);
           this.router.navigate(['/login']);
           break;
       }
