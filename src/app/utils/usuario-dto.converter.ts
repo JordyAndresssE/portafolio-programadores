@@ -9,6 +9,7 @@ export function convertirUsuarioABackend(usuario: Usuario): any {
         email: usuario.email,
         nombre: usuario.nombre,
         fotoPerfil: usuario.fotoPerfil || '',
+        telefono: usuario.telefono || '', // 📱 Campo teléfono para WhatsApp
         rol: usuario.rol,
         especialidad: usuario.especialidad || '',
         descripcion: usuario.descripcion || '',
@@ -61,6 +62,7 @@ export function convertirUsuarioDesdeBackend(usuarioBackend: any): Usuario {
         email: usuarioBackend.email,
         nombre: usuarioBackend.nombre,
         fotoPerfil: usuarioBackend.fotoPerfil,
+        telefono: usuarioBackend.telefono, // 📱 Campo teléfono desde backend
         rol: usuarioBackend.rol,
         especialidad: usuarioBackend.especialidad,
         descripcion: usuarioBackend.descripcion,

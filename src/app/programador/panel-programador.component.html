@@ -81,6 +81,14 @@
                         alt="Vista previa">
                 </div>
 
+                <div class="form-group">
+                    <label>Teléfono WhatsApp 📱</label>
+                    <input [(ngModel)]="perfilForm.telefono" 
+                           placeholder="+593991234567 (incluir código de país)"
+                           aria-label="Número de teléfono para WhatsApp">
+                    <small class="help-text">⚠️ Incluye el código de país (ej: +593 para Ecuador) para recibir notificaciones por WhatsApp</small>
+                </div>
+
                 <h3>Redes Sociales</h3>
                 <div class="form-row">
                     <div class="form-group">

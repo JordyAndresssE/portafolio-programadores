@@ -207,9 +207,10 @@ export class PanelProgramadorComponent implements OnInit {
             motivo: asesoria.motivo,
             estado: estado,
             mensaje_respuesta: mensaje,
-            tipo_notificacion: 'email'
+            tipo_notificacion: estado === 'aprobada' && this.usuario.telefono ? 'ambos' : 'email',
+            telefono_programador: this.usuario.telefono // Campo para WhatsApp
           }).subscribe({
-            next: () => console.log('✅ Notificación enviada'),
+            next: () => console.log('✅ Notificación enviada (Email + WhatsApp)'),
             error: (err) => console.error('❌ Error al enviar notificación:', err)
           });
         }

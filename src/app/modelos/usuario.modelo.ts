@@ -3,6 +3,7 @@ export interface Usuario {
   email: string;
   nombre: string;
   fotoPerfil?: string;
+  telefono?: string; // Número de teléfono con código de país (ej: +593991234567)
   rol: 'administrador' | 'programador' | 'usuario';
   // Campos específicos para programadores
   especialidad?: string;
